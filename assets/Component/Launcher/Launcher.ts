@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Color = cc.Color;
+import NativeUtil from "../../Framework/NativeUtil";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,6 +18,7 @@ export default class Launcher extends cc.Component {
 
     protected onLoad() {
         let self = this;
+        NativeUtil.init();
         //设置背景色
         cc.director.setClearColor(cc.color().fromHEX("#FFFFFF"));
         self.gotoLoadingDelay();

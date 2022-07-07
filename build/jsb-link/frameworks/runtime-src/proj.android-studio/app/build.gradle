@@ -36,6 +36,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     sourceSets.main {
         java.srcDir "src"
         res.srcDir "res"
@@ -132,4 +137,6 @@ android.applicationVariants.all { variant ->
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation project(':libcocos2dx')
+    implementation("org.greenrobot:eventbus:3.3.1")
+
 }

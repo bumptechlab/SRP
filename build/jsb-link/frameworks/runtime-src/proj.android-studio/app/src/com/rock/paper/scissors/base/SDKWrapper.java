@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-package org.cocos2dx.javascript;
+package com.rock.paper.scissors.base;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +31,7 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import org.cocos2dx.javascript.service.SDKClass;
+
 import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
