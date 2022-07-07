@@ -16,16 +16,20 @@ const {ccclass, property} = cc._decorator;
 export default class Launcher extends cc.Component {
 
 
-    onLoad() {
+    protected onLoad() {
+        let self = this;
         //设置背景色
         cc.director.setClearColor(cc.color().fromHEX("#FFFFFF"));
-
-        setTimeout(function () {
-            cc.director.loadScene('Loading');
-        },5000)
+        self.gotoLoadingDelay();
     }
 
-    start() {
+    private gotoLoadingDelay() {
+        setTimeout(function () {
+            cc.director.loadScene('Loading');
+        }, 3000);
+    }
+
+    protected start() {
     }
 
     // update (dt) {}

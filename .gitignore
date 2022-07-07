@@ -5,7 +5,6 @@ settings/services.json
 library/
 temp/
 local/
-build/
 node_modules/
 # setting/
 #settings/
