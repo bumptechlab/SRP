@@ -20,9 +20,9 @@ android {
                     targets 'cocos2djs'
                     arguments 'NDK_TOOLCHAIN_VERSION=clang'
 
-                    def module_paths = [project.file("/Applications/CocosCreator2.2.0.app/Contents/Resources/cocos2d-x"),
-                                        project.file("/Applications/CocosCreator2.2.0.app/Contents/Resources/cocos2d-x/cocos"),
-                                        project.file("/Applications/CocosCreator2.2.0.app/Contents/Resources/cocos2d-x/external")]
+                    def module_paths = [project.file("/Applications/CocosCreator.app/Contents/Resources/cocos2d-x"),
+                                        project.file("/Applications/CocosCreator.app/Contents/Resources/cocos2d-x/cocos"),
+                                        project.file("/Applications/CocosCreator.app/Contents/Resources/cocos2d-x/external")]
                     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                         arguments 'NDK_MODULE_PATH=' + module_paths.join(";")
                     } else {
