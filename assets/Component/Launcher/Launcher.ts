@@ -8,7 +8,8 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import NativeUtil from "../../Framework/NativeUtil";
+import NativeUtil from "../../Framework/Utils/NativeUtil";
+import UserManager from "../../Framework/Business/UserManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -20,13 +21,27 @@ export default class Launcher extends cc.Component {
         let self = this;
         NativeUtil.init();
         //设置背景色
-        cc.director.setClearColor(cc.color().fromHEX("#FFFFFF"));
-        self.gotoLoadingDelay();
+        //cc.director.setClearColor(cc.color().fromHEX("#FFFFFF"));
+        cc.Camera.main.backgroundColor = cc.color().fromHEX("#FFFFFF");
+
+        let loginUser = UserManager.initLoginUser();
+        if (loginUser) {
+            self.gotoHallDelay();
+        } else {
+            self.gotoLoadingDelay();
+        }
+
     }
 
     private gotoLoadingDelay() {
         setTimeout(function () {
             cc.director.loadScene('Loading');
+        }, 3000);
+    }
+
+    private gotoHallDelay() {
+        setTimeout(function () {
+            cc.director.loadScene('Hall');
         }, 3000);
     }
 

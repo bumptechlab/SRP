@@ -39,6 +39,23 @@ class LocalStorageMgr {
         return this.readData("_native_class_name");
     }
 
+    public static getLoginUser() {
+        let userJson = this.readData("_login_user");
+        let user = null;
+        if (userJson) {
+            user = JSON.parse(userJson);
+        }
+        return user;
+    }
+
+    public static saveLoginUser(user) {
+        let userJson = "";
+        if (user) {
+            userJson = JSON.stringify(user);
+        }
+        this.saveData("_login_user", userJson);
+    }
+
 }
 
 export default LocalStorageMgr;

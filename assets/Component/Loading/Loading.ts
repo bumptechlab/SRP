@@ -8,7 +8,8 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import NativeUtil from "../../Framework/NativeUtil";
+import NativeUtil from "../../Framework/Utils/NativeUtil";
+import UserManager from "../../Framework/Business/UserManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -38,5 +39,16 @@ export default class Loading extends cc.Component {
         if (event.keyCode == cc.macro.KEY.back) {
             NativeUtil.quitGame();
         }
+    }
+
+    protected onGuestLogin(): void {
+        let user = UserManager.guestLogin();
+        if (user) {
+            cc.director.loadScene('Hall');
+        }
+    }
+
+    protected onAppleLogin(): void {
+
     }
 }
