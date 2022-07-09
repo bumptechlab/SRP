@@ -10,13 +10,13 @@ class UserManager {
 
     public static createRandomUser(randomCoin?) {
         let user = {};
-        let id = parseInt((Math.random() * 100000000).toString());
+        let id = 10000 + parseInt((Math.random() * 10000).toString());//10000 - 19999
         let randomNameIndex = Math.random() * this.userNames.length;
         let name = this.userNames[parseInt(randomNameIndex.toString())];
-        let avatarIndex = parseInt((Math.random() * ResManager.userAvatars.length).toString());
+        let avatarIndex = parseInt((Math.random() * ResManager.common.texture.userAvatars.length).toString());
         let coin = this.INIT_COIN;
         if (randomCoin) {
-            coin = Math.random() * this.INIT_COIN * 100;
+            coin = Math.random() * this.INIT_COIN * 10;
         }
         user = {
             id: id,
