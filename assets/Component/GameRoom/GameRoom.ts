@@ -8,24 +8,30 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import SpriteManager from "../../Framework/UI/SpriteManager";
+import ResManager from "../../Framework/Resources/ResManager";
+import GameManager from "../../Framework/Business/GameManager";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class GameRoom extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
+    @property(cc.Sprite)
+    titleSprite: cc.Sprite = null;
 
-    @property
-    text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start() {
-
+    protected onLoad(): void {
+        this.initRoom();
     }
 
-    // update (dt) {}
+    private initRoom() {
+        let curRoomKind = GameManager.getCurRoomKind();
+        SpriteManager.loadSprite(this.titleSprite, ResManager.room.texture.roomTitle[curRoomKind]);
+    }
+
+
+    protected onClickBack() {
+        cc.director.loadScene("Hall");
+    }
+
 }

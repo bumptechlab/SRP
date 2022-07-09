@@ -17,6 +17,7 @@ import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
 import Language from "../../Framework/Resources/Language";
 import formatStr = cc.js.formatStr;
+import Game = cc.Game;
 
 const {ccclass, property} = cc._decorator;
 
@@ -113,9 +114,9 @@ export default class Hall extends cc.Component {
     private currentRoomKind;
 
     protected onClickBeginMatch(): void {
-
-
+        GameManager.createOpponent();
         GameManager.setCurRoomKind(this.currentRoomKind);
+        cc.director.loadScene("GameRoom");
     }
 
     public setCurShowState(state: number, roomKind?: number) {
