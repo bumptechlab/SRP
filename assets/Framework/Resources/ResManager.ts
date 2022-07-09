@@ -10,6 +10,12 @@ class ResManager {
         "common/texture/home_img_head3",
     ]
 
+    public static common = {
+        prefab: {
+            toast: ""
+        }
+    }
+
 }
 
 export default ResManager;
