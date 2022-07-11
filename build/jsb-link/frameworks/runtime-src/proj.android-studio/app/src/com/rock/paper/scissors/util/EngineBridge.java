@@ -15,7 +15,7 @@ public class EngineBridge {
         EventBus.getDefault().post(new QuitGameEvent());
     }
 
-    public static void appleLogin(){
+    public static void appleLogin() {
         EventBus.getDefault().post(new AppleLoginEvent());
     }
 }
