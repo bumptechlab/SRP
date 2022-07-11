@@ -1,15 +1,16 @@
 import ResManager from "../Resources/ResManager";
 import LocalStorageMgr from "../Utils/LocalStorageMgr";
+import User from "./User";
 
 class UserManager {
 
 
     private static userNames = ["Sam", "Barney", "Lili", "Kate", "Katherine", "James", "Bob", "Carl"];
     private static INIT_COIN = 1000;
-    private static currentUser = null;
+    private static currentUser: User = null;
 
-    public static createRandomUser(randomCoin?) {
-        let user = {};
+    public static createRandomUser(randomCoin?): User {
+        let user = new User();
         let id = 10000 + parseInt((Math.random() * 10000).toString());//10000 - 19999
         let randomNameIndex = Math.random() * this.userNames.length;
         let name = this.userNames[parseInt(randomNameIndex.toString())];
@@ -18,21 +19,21 @@ class UserManager {
         if (randomCoin) {
             coin = Math.random() * this.INIT_COIN * 10;
         }
-        user = {
-            id: id,
-            name: name,
-            coin: coin,
-            avatar: avatarIndex
-        }
+        user.id = id;
+        user.name = name;
+        user.coin = coin;
+        user.avatar = avatarIndex;
+        user.life = 0;
+        user.isWinner = false;
         return user;
     }
 
-    public static initLoginUser() {
+    public static initLoginUser(): User {
         this.currentUser = LocalStorageMgr.getLoginUser();
         return this.currentUser;
     }
 
-    public static guestLogin() {
+    public static guestLogin(): User {
         this.currentUser = LocalStorageMgr.getLoginUser();
         if (!this.currentUser) {
             this.currentUser = this.createRandomUser();
@@ -41,19 +42,15 @@ class UserManager {
         return this.currentUser;
     }
 
-    public static getLoginUser() {
+    public static getLoginUser(): User {
         return this.currentUser;
-    }
-
-    public static setLoginUser(loginUser) {
-        this.currentUser = loginUser;
     }
 
     public static updateUserCoin(coin: number) {
         if (this.currentUser) {
-            this.currentUser['coin'] = coin;
+            this.currentUser.coin = coin;
+            LocalStorageMgr.saveLoginUser(this.currentUser);
         }
-        LocalStorageMgr.saveLoginUser(this.currentUser);
     }
 
 }

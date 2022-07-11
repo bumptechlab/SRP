@@ -24,7 +24,12 @@ class ResManager {
                 "gameRoom/texture/title_room_three",
                 "gameRoom/texture/title_room_five"
             ],
-            life: "gameRoom/texture/life"
+            result:[
+                "gameRoom/texture/scissor",
+                "gameRoom/texture/rock",
+                "gameRoom/texture/paper"
+            ],
+            life: "gameRoom/texture/life",
         }
     }
 

@@ -1,11 +1,21 @@
 import UserManager from "./UserManager";
+import GameRoomController from "../../Component/GameRoom/GameRoomController";
+import User from "./User";
 
 export default class GameManager {
 
+    //房间类型
     static ROOM_KIND = cc.Enum({
         ONE: 0,           //一局定胜负
         THREE: 1,             // 三局两胜
         FIVE: 2    // 五局三胜
+    });
+
+    //出拳结果
+    static RESULT = cc.Enum({
+        SCISSORS: 0,           //剪刀
+        ROCK: 1,             // 石头
+        PAPER: 2    // 步
     });
 
     public static roomInfo = {
@@ -20,17 +30,15 @@ export default class GameManager {
         }
     };
     public static betAmount = 10;//每一局下注金额
-    private static curOpponent; //当前对手
-    private static curRoomKind; //当前房间
+    private static curRoom: GameRoomController; //当前房间
 
-    public static createOpponent() {
+    public static createOpponent(): User {
         let curLoginUser = UserManager.getLoginUser();
         let opponent = UserManager.createRandomUser(true);
         do {
             opponent = UserManager.createRandomUser(true);
         } while (curLoginUser.id == opponent.id || curLoginUser.avatar == opponent.avatar || curLoginUser.name == opponent.name)//对手的ID，头像，名字不能跟当前用户一样
 
-        this.setCurOpponent(opponent);
         return opponent;
     }
 
@@ -39,41 +47,42 @@ export default class GameManager {
      * @param roomKind
      */
     public static createRoom(roomKind: number) {
+
+        let room = new GameRoomController();
         let opponent = this.createOpponent();
         let initLife = 0;
+        let maxRound = 0;
         if (roomKind == GameManager.ROOM_KIND.ONE) {
             initLife = 1;
+            maxRound = 1;
         } else if (roomKind == GameManager.ROOM_KIND.THREE) {
             initLife = 3;
+            maxRound = 3;
         } else if (roomKind == GameManager.ROOM_KIND.FIVE) {
             initLife = 5;
+            maxRound = 5;
         }
-        opponent["life"] = initLife;
+        opponent.life = initLife;
 
         let loginUser = UserManager.getLoginUser();
-        loginUser["life"] = initLife;
+        loginUser.life = initLife;
+
+        room.me = loginUser;
+        room.opponent = opponent;
+        room.roomKind = roomKind;
+        room.maxRound = maxRound;
+        room.curRound = 0;
+
+        this.setCurRoom(room);
+        return room;
     }
 
-    public static setCurOpponent(user) {
-        this.curOpponent = user;
+    public static setCurRoom(room: GameRoomController) {
+        this.curRoom = room;
     }
 
-    public static getCurOpponent() {
-        return this.curOpponent;
-    }
-
-    public static setCurRoomKind(roomKind) {
-        this.curRoomKind = roomKind;
-    }
-
-    public static getCurRoomKind() {
-        return this.curRoomKind;
-    }
-
-    public static updateOpponentCoin(coin: number) {
-        if (this.curOpponent) {
-            this.curOpponent.coin = coin;
-        }
+    public static getCurRoom() {
+        return this.curRoom;
     }
 
 }

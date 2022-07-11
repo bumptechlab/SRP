@@ -39,7 +39,7 @@ export default class LifeController extends cc.Component {
         this.updateLifeCount(user.life);
     }
 
-    private updateLifeCount(lifeCount) {
+    public updateLifeCount(lifeCount) {
         if (cc.isValid(this.lifeCount)) {
             this.lifeCount.removeAllChildren();
             for (let i = 0; i < lifeCount; i++) {

@@ -13,6 +13,7 @@ import ResManager from "../../Framework/Resources/ResManager";
 import GameManager from "../../Framework/Business/GameManager";
 import LifeController from "./LifeController";
 import UserManager from "../../Framework/Business/UserManager";
+import ResultController from "./ResultController";
 
 const {ccclass, property} = cc._decorator;
 
@@ -28,18 +29,34 @@ export default class GameRoom extends cc.Component {
     @property(LifeController)
     opponentLifeController: LifeController = null;
 
+    @property(ResultController)
+    meResultController: ResultController = null;
+
+    @property(ResultController)
+    opponentResultController: ResultController = null;
+
     protected onLoad(): void {
         this.initRoom();
     }
 
     private initRoom() {
-        let curRoomKind = GameManager.getCurRoomKind();
-        SpriteManager.loadSprite(this.titleSprite, ResManager.room.texture.roomTitle[curRoomKind]);
+        let curRoom = GameManager.getCurRoom();
+        SpriteManager.loadSprite(this.titleSprite, ResManager.room.texture.roomTitle[curRoom.roomKind]);
+
+        let me = curRoom.me;
+        let opponent = curRoom.opponent;
+
         if (cc.isValid(this.meLifeController)) {
-            this.meLifeController.init(UserManager.getLoginUser());
+            this.meLifeController.init(me);
         }
         if (cc.isValid(this.opponentLifeController)) {
-            this.opponentLifeController.init(GameManager.getCurOpponent());
+            this.opponentLifeController.init(opponent);
+        }
+        if (cc.isValid(this.meResultController)) {
+            this.meResultController.init(me);
+        }
+        if (cc.isValid(this.opponentResultController)) {
+            this.opponentResultController.init(opponent)
         }
     }
 
