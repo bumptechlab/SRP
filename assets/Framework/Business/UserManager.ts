@@ -1,6 +1,7 @@
 import ResManager from "../Resources/ResManager";
 import LocalStorageMgr from "../Utils/LocalStorageMgr";
 import User from "./User";
+import GameManager from "./GameManager";
 
 class UserManager {
 
@@ -25,6 +26,8 @@ class UserManager {
         user.avatar = avatarIndex;
         user.life = 0;
         user.isWinner = false;
+        user.gesture = GameManager.GESTURE.NONE;
+        user.winCount = 0;
         return user;
     }
 

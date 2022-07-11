@@ -24,12 +24,19 @@ class ResManager {
                 "gameRoom/texture/title_room_three",
                 "gameRoom/texture/title_room_five"
             ],
-            result:[
+            gesture: [
                 "gameRoom/texture/scissor",
                 "gameRoom/texture/rock",
                 "gameRoom/texture/paper"
             ],
             life: "gameRoom/texture/life",
+        },
+        animation: {
+            vs: "gameRoom/animation/VS"
+        },
+        prefab:{
+            winDialog: "gameRoom/prefab/WinDialog",
+            lostDialog: "gameRoom/prefab/LostDialog"
         }
     }
 

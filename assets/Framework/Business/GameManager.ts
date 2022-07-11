@@ -7,26 +7,27 @@ export default class GameManager {
     //房间类型
     static ROOM_KIND = cc.Enum({
         ONE: 0,           //一局定胜负
-        THREE: 1,             // 三局两胜
-        FIVE: 2    // 五局三胜
+        THREE: 1,         // 三局两胜
+        FIVE: 2           // 五局三胜
     });
 
-    //出拳结果
-    static RESULT = cc.Enum({
+    //出拳
+    static GESTURE = cc.Enum({
+        NONE: 100,              //没有出拳（编译系统不让用负数）
         SCISSORS: 0,           //剪刀
-        ROCK: 1,             // 石头
-        PAPER: 2    // 步
+        ROCK: 1,               //石头
+        PAPER: 2               //步
     });
 
     public static roomInfo = {
         roomOne: {
-            limit: 1000,
+            limit: 10,
         },
         roomThree: {
-            limit: 1000,
+            limit: 50,
         },
         roomFive: {
-            limit: 1000,
+            limit: 100,
         }
     };
     public static betAmount = 10;//每一局下注金额
@@ -46,34 +47,19 @@ export default class GameManager {
      * 初始化一个房间
      * @param roomKind
      */
-    public static createRoom(roomKind: number) {
+    public static enterRoom(roomKind: number) {
+        let me = UserManager.getLoginUser();
+        let opponent = this.createOpponent();
 
         let room = new GameRoomController();
-        let opponent = this.createOpponent();
-        let initLife = 0;
-        let maxRound = 0;
-        if (roomKind == GameManager.ROOM_KIND.ONE) {
-            initLife = 1;
-            maxRound = 1;
-        } else if (roomKind == GameManager.ROOM_KIND.THREE) {
-            initLife = 3;
-            maxRound = 3;
-        } else if (roomKind == GameManager.ROOM_KIND.FIVE) {
-            initLife = 5;
-            maxRound = 5;
-        }
-        opponent.life = initLife;
-
-        let loginUser = UserManager.getLoginUser();
-        loginUser.life = initLife;
-
-        room.me = loginUser;
-        room.opponent = opponent;
-        room.roomKind = roomKind;
-        room.maxRound = maxRound;
-        room.curRound = 0;
-
+        room.initRoom(roomKind, me, opponent);
         this.setCurRoom(room);
+
+        //进入房间扣金币
+        let myCoin = me.coin - this.betAmount;
+        room.updateMyCoin(myCoin);
+
+        cc.director.loadScene("GameRoom");
         return room;
     }
 

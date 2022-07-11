@@ -20,7 +20,7 @@ export default class ResultController extends cc.Component {
     avatarSprite: cc.Sprite = null;
 
     @property(cc.Sprite)
-    resultSprite: cc.Sprite = null;
+    gestureSprite: cc.Sprite = null;
 
     @property(cc.Sprite)
     winnerSprite: cc.Sprite = null;
@@ -30,31 +30,22 @@ export default class ResultController extends cc.Component {
 
 
     protected onLoad(): void {
+
     }
 
     public init(user) {
-
+        if (!user) {
+            return;
+        }
         let avatarPath = ResManager.common.texture.userAvatarsVS[user.avatar];
         SpriteManager.loadSprite(this.avatarSprite, avatarPath);
 
-        SpriteManager.setSpriteFrame(this.resultSprite, null);
-
-        if (cc.isValid(this.winnerSprite)) {
-            this.winnerSprite.node.active = false;
+        let resultPath = ResManager.room.texture.gesture[user.gesture];
+        if (resultPath) {
+            SpriteManager.loadSprite(this.gestureSprite, resultPath);
+        } else {
+            SpriteManager.setSpriteFrame(this.gestureSprite, null);
         }
-        if (cc.isValid(this.highlightSprite)) {
-            this.highlightSprite.node.active = false;
-        }
-    }
-
-
-    public updateResult(user) {
-
-        let avatarPath = ResManager.common.texture.userAvatarsVS[user.avatar];
-        SpriteManager.loadSprite(this.avatarSprite, avatarPath);
-
-        let resultPath = ResManager.room.texture.result[user.result];
-        SpriteManager.loadSprite(this.resultSprite, resultPath);
 
         if (cc.isValid(this.winnerSprite)) {
             this.winnerSprite.node.active = user.isWinner;
@@ -63,4 +54,6 @@ export default class ResultController extends cc.Component {
             this.highlightSprite.node.active = user.isWinner;
         }
     }
+
+
 }

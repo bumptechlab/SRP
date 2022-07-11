@@ -16,9 +16,8 @@ import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
 import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
 import Language from "../../Framework/Resources/Language";
-import formatStr = cc.js.formatStr;
-import Game = cc.Game;
 import NativeUtil from "../../Framework/Utils/NativeUtil";
+import formatStr = cc.js.formatStr;
 
 const {ccclass, property} = cc._decorator;
 
@@ -125,8 +124,7 @@ export default class Hall extends cc.Component {
     private currentRoomKind;
 
     protected onClickBeginMatch(): void {
-        GameManager.createRoom(this.currentRoomKind);
-        cc.director.loadScene("GameRoom");
+        GameManager.enterRoom(this.currentRoomKind);
     }
 
     public setCurShowState(state: number, roomKind?: number) {
