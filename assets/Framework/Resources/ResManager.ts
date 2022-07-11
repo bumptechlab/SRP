@@ -23,7 +23,8 @@ class ResManager {
                 "gameRoom/texture/title_room_one",
                 "gameRoom/texture/title_room_three",
                 "gameRoom/texture/title_room_five"
-            ]
+            ],
+            life: "gameRoom/texture/life"
         }
     }
 

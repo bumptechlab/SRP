@@ -153,44 +153,6 @@ class SpriteManager {
         }
     }
 
-    /**
-     * 从CommonAtlasMgr里面获取图集资源
-     * @param path 图集资源路径
-     * @param spriteName 图集里面的图片名称
-     */
-    public static getSpriteFromCommonAtlas(path, spriteName) {
-        if (!path || !spriteName) {
-            return null;
-        }
-
-        //去掉前后斜杠，统一路径标准，方便判断是否一致
-        let replaceReg = /^\/|\/$/g;
-        path = path.replace(replaceReg, "");
-
-        let atlasRes = CommonDepend.CommonAtlasMgr.atlasRes();
-
-        // 公共图集
-        let commongame = atlasRes && atlasRes.commongame ? atlasRes.commongame.replace(replaceReg, "") : "";
-        // 牛牛图集
-        let cardtype = atlasRes && atlasRes.cardtype ? atlasRes.cardtype.replace(replaceReg, "") : "";
-        // [币多]用户头像
-        let gameHead = atlasRes && atlasRes.gameHead ? atlasRes.gameHead.replace(replaceReg, "") : "";
-
-        let atlas = null;
-        if (path == commongame) {
-            atlas = CommonDepend.CommonAtlasMgr.atlas;
-        } else if (path == cardtype) {
-            atlas = CommonDepend.CommonAtlasMgr.cattleAtlas;
-        } else if (path == gameHead) {
-            atlas = CommonDepend.CommonAtlasMgr.userHeadAtlas;
-        }
-
-        let spriteFrame = null;
-        if (atlas) {
-            spriteFrame = atlas.getSpriteFrame(spriteName);
-        }
-        return spriteFrame;
-    }
 
     /**
      * 只获取SpriteFrame，不对组件进行赋值

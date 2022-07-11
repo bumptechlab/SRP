@@ -125,8 +125,7 @@ export default class Hall extends cc.Component {
     private currentRoomKind;
 
     protected onClickBeginMatch(): void {
-        GameManager.createOpponent();
-        GameManager.setCurRoomKind(this.currentRoomKind);
+        GameManager.createRoom(this.currentRoomKind);
         cc.director.loadScene("GameRoom");
     }
 

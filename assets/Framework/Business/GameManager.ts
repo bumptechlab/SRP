@@ -28,10 +28,30 @@ export default class GameManager {
         let opponent = UserManager.createRandomUser(true);
         do {
             opponent = UserManager.createRandomUser(true);
-        } while (curLoginUser.id == opponent.id)//不能跟跟当前登陆用户ID一致
+        } while (curLoginUser.id == opponent.id || curLoginUser.avatar == opponent.avatar || curLoginUser.name == opponent.name)//对手的ID，头像，名字不能跟当前用户一样
 
         this.setCurOpponent(opponent);
         return opponent;
+    }
+
+    /**
+     * 初始化一个房间
+     * @param roomKind
+     */
+    public static createRoom(roomKind: number) {
+        let opponent = this.createOpponent();
+        let initLife = 0;
+        if (roomKind == GameManager.ROOM_KIND.ONE) {
+            initLife = 1;
+        } else if (roomKind == GameManager.ROOM_KIND.THREE) {
+            initLife = 3;
+        } else if (roomKind == GameManager.ROOM_KIND.FIVE) {
+            initLife = 5;
+        }
+        opponent["life"] = initLife;
+
+        let loginUser = UserManager.getLoginUser();
+        loginUser["life"] = initLife;
     }
 
     public static setCurOpponent(user) {
