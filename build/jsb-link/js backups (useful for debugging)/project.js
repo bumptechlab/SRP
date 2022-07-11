@@ -194,7 +194,7 @@ cc._RF.push(t, "c5e60FAkL5JKZtwdy83I9mx", "Hall");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/Business/UserManager"), a = e("../../Framework/UI/LabelManager"), r = e("../../Framework/Business/GameManager"), c = e("../../Framework/Base/CommonPrefabMgr"), i = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = cc.js.formatStr, f = cc._decorator, d = f.ccclass, p = f.property, m = function(e) {
+var n = e("../../Framework/Business/UserManager"), a = e("../../Framework/UI/LabelManager"), r = e("../../Framework/Business/GameManager"), c = e("../../Framework/Base/CommonPrefabMgr"), i = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = cc.js.formatStr, f = e("../../Framework/Utils/NativeUtil"), d = cc._decorator, p = d.ccclass, m = d.property, g = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -214,6 +214,12 @@ return t;
 }
 t.prototype.onLoad = function() {
 this.initUserInfo();
+};
+t.prototype.onEnable = function() {
+cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+};
+t.prototype.onDisable = function() {
+cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.initUserInfo = function() {
 var e = n.default.getLoginUser(), t = s.default.common.texture.userAvatars[e.avatar];
@@ -255,19 +261,22 @@ a.default.setLabelString(this.betTipsLabel, u(l.default.common.betAmountTips, r.
 this.currentRoomKind = t;
 }
 };
-__decorate([ p(cc.Node) ], t.prototype, "hallLayout", void 0);
-__decorate([ p(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
-__decorate([ p(cc.Label) ], t.prototype, "nameLabel", void 0);
-__decorate([ p(cc.Label) ], t.prototype, "idLabel", void 0);
-__decorate([ p(cc.Label) ], t.prototype, "coinLabel", void 0);
-__decorate([ p(cc.Node) ], t.prototype, "homeLogo", void 0);
-__decorate([ p(cc.Node) ], t.prototype, "matchLayout", void 0);
-__decorate([ p(cc.Sprite) ], t.prototype, "roomTitleSprite", void 0);
-__decorate([ p(cc.Sprite) ], t.prototype, "meMatchAvatarSprite", void 0);
-__decorate([ p(cc.Label) ], t.prototype, "betTipsLabel", void 0);
-return t = __decorate([ d ], t);
+t.prototype.onKeyUp = function(e) {
+e.keyCode == cc.macro.KEY.back && f.default.quitGame();
+};
+__decorate([ m(cc.Node) ], t.prototype, "hallLayout", void 0);
+__decorate([ m(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
+__decorate([ m(cc.Label) ], t.prototype, "nameLabel", void 0);
+__decorate([ m(cc.Label) ], t.prototype, "idLabel", void 0);
+__decorate([ m(cc.Label) ], t.prototype, "coinLabel", void 0);
+__decorate([ m(cc.Node) ], t.prototype, "homeLogo", void 0);
+__decorate([ m(cc.Node) ], t.prototype, "matchLayout", void 0);
+__decorate([ m(cc.Sprite) ], t.prototype, "roomTitleSprite", void 0);
+__decorate([ m(cc.Sprite) ], t.prototype, "meMatchAvatarSprite", void 0);
+__decorate([ m(cc.Label) ], t.prototype, "betTipsLabel", void 0);
+return t = __decorate([ p ], t);
 }(cc.Component);
-o.default = m;
+o.default = g;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonPrefabMgr": "CommonPrefabMgr",
@@ -276,7 +285,8 @@ cc._RF.pop();
 "../../Framework/Resources/Language": "Language",
 "../../Framework/Resources/ResManager": "ResManager",
 "../../Framework/UI/LabelManager": "LabelManager",
-"../../Framework/UI/SpriteManager": "SpriteManager"
+"../../Framework/UI/SpriteManager": "SpriteManager",
+"../../Framework/Utils/NativeUtil": "NativeUtil"
 } ],
 LabelManager: [ function(e, t, o) {
 "use strict";

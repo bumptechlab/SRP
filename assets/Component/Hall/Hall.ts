@@ -18,6 +18,7 @@ import ResManager from "../../Framework/Resources/ResManager";
 import Language from "../../Framework/Resources/Language";
 import formatStr = cc.js.formatStr;
 import Game = cc.Game;
+import NativeUtil from "../../Framework/Utils/NativeUtil";
 
 const {ccclass, property} = cc._decorator;
 
@@ -60,6 +61,16 @@ export default class Hall extends cc.Component {
     protected onLoad() {
         let self = this;
         self.initUserInfo();
+    }
+
+    protected onEnable(): void {
+        let self = this;
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, this);
+    }
+
+    protected onDisable(): void {
+        let self = this;
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, self);
     }
 
     private initUserInfo(): void {
@@ -134,6 +145,12 @@ export default class Hall extends cc.Component {
             SpriteManager.loadSprite(this.meMatchAvatarSprite, ResManager.common.texture.userAvatars[loginUser.avatar]);
             LabelManager.setLabelString(this.betTipsLabel, formatStr(Language.common.betAmountTips, GameManager.betAmount));
             this.currentRoomKind = roomKind;
+        }
+    }
+
+    public onKeyUp(event): void {
+        if (event.keyCode == cc.macro.KEY.back) {
+            NativeUtil.quitGame();
         }
     }
 }
