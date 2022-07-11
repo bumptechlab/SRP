@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.rock.paper.scissors.R;
 import com.rock.paper.scissors.base.BaseActivity;
+import com.rock.paper.scissors.event.AppleLoginEvent;
 import com.rock.paper.scissors.event.QuitGameEvent;
 import com.rock.paper.scissors.util.EngineBridge;
 import com.rock.paper.scissors.util.LogUtil;
@@ -95,4 +96,8 @@ public class AppActivity extends BaseActivity {
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAppleLogin(AppleLoginEvent event) {
+
+    }
 }

@@ -23,6 +23,20 @@ return o[c].exports;
 for (var r = "function" == typeof __require && __require, c = 0; c < n.length; c++) a(n[c]);
 return a;
 }({
+CommonEventName: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "f49d9gNXhlCtpNPmY1KGy8x", "CommonEventName");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = function() {
+function e() {}
+e.EVENT_APPLE_LOGIN_RESULT = "EVENT_APPLE_LOGIN_RESULT";
+return e;
+}();
+o.default = n;
+cc._RF.pop();
+}, {} ],
 CommonFunction: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "04b32vpnTZD4qFboCOgX/Mv", "CommonFunction");
@@ -465,19 +479,19 @@ cc._RF.push(t, "b7e4780HsVNypzwv6PTvZdF", "Loading");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/Utils/NativeUtil"), a = e("../../Framework/Business/UserManager"), r = cc._decorator, c = r.ccclass, i = r.property, s = function(e) {
+var n = e("../../Framework/Utils/NativeUtil"), a = e("../../Framework/Business/UserManager"), r = e("../../Framework/Base/CommonEventName"), c = cc._decorator, i = c.ccclass, s = (c.property, 
+function(e) {
 __extends(t, e);
 function t() {
-var t = null !== e && e.apply(this, arguments) || this;
-t.label = null;
-t.text = "hello";
-return t;
+return null !== e && e.apply(this, arguments) || this;
 }
 t.prototype.onLoad = function() {};
 t.prototype.onEnable = function() {
+cc.director.on(r.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
 cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.onDisable = function() {
+cc.director.off(r.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
 cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.onKeyUp = function(e) {
@@ -486,14 +500,16 @@ e.keyCode == cc.macro.KEY.back && n.default.quitGame();
 t.prototype.onGuestLogin = function() {
 a.default.guestLogin() && cc.director.loadScene("Hall");
 };
-t.prototype.onAppleLogin = function() {};
-__decorate([ i(cc.Label) ], t.prototype, "label", void 0);
-__decorate([ i ], t.prototype, "text", void 0);
-return t = __decorate([ c ], t);
-}(cc.Component);
+t.prototype.onAppleLogin = function() {
+n.default.appleLogin();
+};
+t.prototype.onAppLoginResult = function(e, t) {};
+return t = __decorate([ i ], t);
+}(cc.Component));
 o.default = s;
 cc._RF.pop();
 }, {
+"../../Framework/Base/CommonEventName": "CommonEventName",
 "../../Framework/Business/UserManager": "UserManager",
 "../../Framework/Utils/NativeUtil": "NativeUtil"
 } ],
@@ -546,7 +562,7 @@ cc._RF.push(t, "9cb6byZwNZPHKjrtMtR8XGx", "NativeUtil");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("./LocalStorageMgr"), a = function() {
+var n = e("./LocalStorageMgr"), a = e("../Base/CommonEventName"), r = function() {
 function e() {}
 e.init = function() {
 this.nativeClassName = n.default.getNativeClassName();
@@ -573,11 +589,29 @@ jsb.reflection.callStaticMethod(t, o);
 }
 } else console.log("quitGame");
 };
+e.appleLogin = function() {
+if (cc.sys.isNative) {
+if (cc.sys.os == cc.sys.OS_ANDROID) {
+var t = e.nativeAndroidClassName(), o = "appleLogin";
+jsb.reflection.callStaticMethod(t, o, "()V");
+} else if (cc.sys.os == cc.sys.OS_IOS) {
+t = e.nativeiOSClasssName(), o = "appleLogin";
+jsb.reflection.callStaticMethod(t, o);
+}
+} else console.log("appleLogin");
+};
 return e;
 }();
-o.default = a;
+o.default = r;
+cc.onAppleLoginResult = function(e, t) {
+console.log("onAppleLoginResult: state=%s, data=%s", e, t);
+var o = {};
+t && (o = JSON.parse(t));
+cc.director.emit(a.default.EVENT_APPLE_LOGIN_RESULT, e, o);
+};
 cc._RF.pop();
 }, {
+"../Base/CommonEventName": "CommonEventName",
 "./LocalStorageMgr": "LocalStorageMgr"
 } ],
 NodeManager: [ function(e, t, o) {
@@ -1020,4 +1054,4 @@ cc._RF.pop();
 "../Resources/ResManager": "ResManager",
 "../Utils/LocalStorageMgr": "LocalStorageMgr"
 } ]
-}, {}, [ "Toast", "GameRoom", "Hall", "Launcher", "Loading", "CommonFunction", "CommonPrefabMgr", "Global", "GameManager", "UserManager", "Language", "ResManager", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "LocalStorageMgr", "NativeUtil" ]);
+}, {}, [ "Toast", "GameRoom", "Hall", "Launcher", "Loading", "CommonEventName", "CommonFunction", "CommonPrefabMgr", "Global", "GameManager", "UserManager", "Language", "ResManager", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "LocalStorageMgr", "NativeUtil" ]);

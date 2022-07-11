@@ -1,4 +1,5 @@
 import LocalStorageMgr from "./LocalStorageMgr";
+import CommonEventName from "../Base/CommonEventName";
 
 class NativeUtil {
 
@@ -43,6 +44,37 @@ class NativeUtil {
         }
     }
 
+    static appleLogin() {
+        if (cc.sys.isNative) {
+            if (cc.sys.os == cc.sys.OS_ANDROID) {
+                let className = NativeUtil.nativeAndroidClassName();
+                let methodName = "appleLogin";
+                let methodSignature = "()V";
+                jsb.reflection.callStaticMethod(className, methodName, methodSignature);
+            } else if (cc.sys.os == cc.sys.OS_IOS) {
+                let className = NativeUtil.nativeiOSClasssName();
+                let methodName = "appleLogin";
+                jsb.reflection.callStaticMethod(className, methodName);
+            }
+        } else {
+            console.log("appleLogin");
+        }
+    }
+
 }
 
 export default NativeUtil;
+
+/**
+ * Native端返回AppleLogin结果
+ * @param state
+ * @param data
+ */
+cc.onAppleLoginResult = function (state, data) {
+    console.log("onAppleLoginResult: state=%s, data=%s", state, data);
+    let dataJson = {};
+    if (data) {
+        dataJson = JSON.parse(data);
+    }
+    cc.director.emit(CommonEventName.EVENT_APPLE_LOGIN_RESULT, state, dataJson);
+};

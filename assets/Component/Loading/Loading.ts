@@ -10,28 +10,26 @@
 
 import NativeUtil from "../../Framework/Utils/NativeUtil";
 import UserManager from "../../Framework/Business/UserManager";
+import CommonEventName from "../../Framework/Base/CommonEventName";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Loading extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
 
     onLoad() {
     }
 
     protected onEnable(): void {
         let self = this;
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, this);
+        cc.director.on(CommonEventName.EVENT_APPLE_LOGIN_RESULT, self.onAppLoginResult, self);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, self);
     }
 
     protected onDisable(): void {
         let self = this;
+        cc.director.off(CommonEventName.EVENT_APPLE_LOGIN_RESULT, self.onAppLoginResult, self);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, self);
     }
 
@@ -49,6 +47,10 @@ export default class Loading extends cc.Component {
     }
 
     protected onAppleLogin(): void {
+        NativeUtil.appleLogin();
+    }
+
+    protected onAppLoginResult(state, result) {
 
     }
 }
