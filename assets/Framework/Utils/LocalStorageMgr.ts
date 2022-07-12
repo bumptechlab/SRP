@@ -18,8 +18,7 @@ class LocalStorageMgr {
     }
 
     private static readBoolean(key) {
-        let data;
-        data = cc.sys.localStorage.getItem("_local" + key);
+        let data = cc.sys.localStorage.getItem("_local" + key);
         return data == 1 || data == 'true';
     }
 

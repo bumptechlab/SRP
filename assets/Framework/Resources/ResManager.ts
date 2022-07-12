@@ -8,7 +8,8 @@ class ResManager {
         },
         prefab: {
             toast: "common/prefab/Toast",
-            userDialog: "common/prefab/UserDialog"
+            userDialog: "common/prefab/UserDialog",
+            settingDialog: "common/prefab/SettingDialog"
         },
         texture: {
             userAvatars: [
@@ -30,7 +31,9 @@ class ResManager {
                 "common/texture/number/7",
                 "common/texture/number/8",
                 "common/texture/number/9",
-            ]
+            ],
+            off: "common/texture/icon_off",
+            on: "common/texture/icon_on",
         }
     };
 

@@ -99,6 +99,8 @@ export default class Hall extends cc.Component {
     protected onClickSetting(event): void {
         CommonFunction.clickManager(event.target);
         CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
+        CommonPrefabMgr.showSettingDialog();
     }
 
     protected onClickRoomOne(event): void {
