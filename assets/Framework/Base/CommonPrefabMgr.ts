@@ -6,6 +6,7 @@ import WinDialog from "../../Component/Dialog/WinDialog";
 import User from "../Business/User";
 import UserDialog from "../../Component/Dialog/UserDialog";
 import SettingDialog from "../../Component/Dialog/SettingDialog";
+import RuleDialog from "../../Component/Dialog/RuleDialog";
 
 class CommonPrefabMgr {
 
@@ -110,6 +111,23 @@ class CommonPrefabMgr {
                     }
                     if (propBox.getComponent(SettingDialog)) {
                         propBox.getComponent(SettingDialog).showDialog();
+                    }
+                }
+            }
+        });
+    }
+
+    static showRuleDialog() {
+        let canvas = CommonFunction.getSceneCanvas();
+        PrefabManager.getPrefab(ResManager.common.prefab.ruleDialog, function (prefab) {
+            if (prefab) {
+                let propBox = cc.instantiate(prefab);
+                if (propBox) {
+                    if (cc.isValid(canvas)) {
+                        canvas.addChild(propBox, Global.Config.layerZOrder.Dialog);
+                    }
+                    if (propBox.getComponent(RuleDialog)) {
+                        propBox.getComponent(RuleDialog).showDialog();
                     }
                 }
             }

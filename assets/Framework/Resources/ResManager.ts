@@ -9,7 +9,8 @@ class ResManager {
         prefab: {
             toast: "common/prefab/Toast",
             userDialog: "common/prefab/UserDialog",
-            settingDialog: "common/prefab/SettingDialog"
+            settingDialog: "common/prefab/SettingDialog",
+            ruleDialog: "common/prefab/RuleDialog",
         },
         texture: {
             userAvatars: [
