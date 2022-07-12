@@ -3,6 +3,8 @@ import ResManager from "../Resources/ResManager";
 import PrefabManager from "../UI/PrefabManager";
 import Global from "./Global";
 import WinDialog from "../../Component/Dialog/WinDialog";
+import User from "../Business/User";
+import UserDialog from "../../Component/Dialog/UserDialog";
 
 class CommonPrefabMgr {
 
@@ -73,6 +75,23 @@ class CommonPrefabMgr {
                     }
                     if (propBox.getComponent(WinDialog)) {
                         propBox.getComponent(WinDialog).showDialog(winAmount, backCallback, continueCallback);
+                    }
+                }
+            }
+        });
+    }
+
+    static showUserDialog(user: User) {
+        let canvas = CommonFunction.getSceneCanvas();
+        PrefabManager.getPrefab(ResManager.common.prefab.userDialog, function (prefab) {
+            if (prefab) {
+                let propBox = cc.instantiate(prefab);
+                if (propBox) {
+                    if (cc.isValid(canvas)) {
+                        canvas.addChild(propBox, Global.Config.layerZOrder.Dialog);
+                    }
+                    if (propBox.getComponent(UserDialog)) {
+                        propBox.getComponent(UserDialog).showDialog(user);
                     }
                 }
             }

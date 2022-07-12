@@ -10,6 +10,8 @@
 
 import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
+import User from "../../Framework/Business/User";
+import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -29,11 +31,9 @@ export default class ResultController extends cc.Component {
     highlightSprite: cc.Sprite = null;
 
 
-    protected onLoad(): void {
+    private user: User = null;
 
-    }
-
-    public init(user) {
+    public init(user: User, isDraw: boolean) {
         if (!user) {
             return;
         }
@@ -47,12 +47,23 @@ export default class ResultController extends cc.Component {
             SpriteManager.setSpriteFrame(this.gestureSprite, null);
         }
 
-        if (cc.isValid(this.winnerSprite)) {
-            this.winnerSprite.node.active = user.isWinner;
+        if (isDraw) {
+            SpriteManager.loadSprite(this.winnerSprite, ResManager.room.texture.draw);
+        } else {
+            if (user.isWinner) {
+                SpriteManager.loadSprite(this.winnerSprite, ResManager.room.texture.winner);
+            } else {
+                SpriteManager.setSpriteFrame(this.winnerSprite, null);
+            }
         }
         if (cc.isValid(this.highlightSprite)) {
             this.highlightSprite.node.active = user.isWinner;
         }
+        this.user = user;
+    }
+
+    protected onClickAvatar() {
+        CommonPrefabMgr.showUserDialog(this.user);
     }
 
 

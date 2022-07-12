@@ -18,7 +18,7 @@ class UserManager {
         let avatarIndex = parseInt((Math.random() * ResManager.common.texture.userAvatars.length).toString());
         let coin = this.INIT_COIN;
         if (randomCoin) {
-            coin = Math.random() * this.INIT_COIN * 10;
+            coin = parseInt((Math.random() * this.INIT_COIN * 10).toString());
         }
         user.id = id;
         user.name = name;

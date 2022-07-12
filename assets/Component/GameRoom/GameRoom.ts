@@ -51,6 +51,7 @@ export default class GameRoom extends cc.Component {
     countDown: CountDown = null;
 
     private curRoom: GameRoomController;
+    private COUNT_DOWN_TIME = 10;
 
     protected onLoad(): void {
         this.curRoom = GameManager.getCurRoom();
@@ -77,11 +78,15 @@ export default class GameRoom extends cc.Component {
         let opponent = this.curRoom.opponent;
 
         this.updateLife(me, opponent);
-        this.updateResult(me, opponent);
+        this.updateResult(me, opponent, false);
         this.setControlVisible(false);
 
         if (cc.isValid(this.gestureSelector)) {
-            this.gestureSelector.init(this.onSelectGesture);
+            this.gestureSelector.init(this.onSelectGesture.bind(this));
+            this.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
+        }
+        if (cc.isValid(this.countDown)) {
+            this.countDown.init(this.countdownCallback.bind(this));
         }
     }
 
@@ -115,6 +120,9 @@ export default class GameRoom extends cc.Component {
         };
         SpineManager.loadSpine(this.vsSkeleton, ResManager.room.animation.vs, options, function () {
             self.setControlVisible(true);
+            if (cc.isValid(self.countDown)) {
+                self.countDown.startCountDown(self.COUNT_DOWN_TIME);
+            }
         });
     }
 
@@ -138,17 +146,20 @@ export default class GameRoom extends cc.Component {
      * @param me
      * @param opponent
      */
-    private updateResult(me: User, opponent: User) {
+    private updateResult(me: User, opponent: User, isDraw: boolean) {
         if (cc.isValid(this.meResultController)) {
-            this.meResultController.init(me);
+            this.meResultController.init(me, isDraw);
         }
         if (cc.isValid(this.opponentResultController)) {
-            this.opponentResultController.init(opponent)
+            this.opponentResultController.init(opponent, isDraw)
         }
     }
 
     private beginMatch(gesture: number) {
         let self = this;
+        if (cc.isValid(self.countDown)) {
+            self.countDown.stopCountDown();
+        }
         self.curRoom.beginMatch(gesture, function (me: User, opponent: User, isGameOver: boolean) {
             if (isGameOver) {
                 //结算金额
@@ -157,6 +168,7 @@ export default class GameRoom extends cc.Component {
 
                     self.curRoom.updateMyCoin(me.coin + meWinCoin);
                     CommonPrefabMgr.showWinDialog(meWinCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
+
                 } else if (opponent.isWinner) {
                     let meLostCoin = -GameManager.betAmount;
 
@@ -164,14 +176,50 @@ export default class GameRoom extends cc.Component {
                     self.curRoom.updateOpponentCoin(opponent.coin + opponentWinCoin);
                     CommonPrefabMgr.showLostDialog(meLostCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
                 }
+                if (cc.isValid(self.countDown)) {
+                    self.countDown.stopCountDown();
+                }
             } else {
                 if (cc.isValid(self.countDown)) {
-                    self.countDown.startCountDown(10);
+                    self.countDown.startCountDown(self.COUNT_DOWN_TIME);
                 }
             }
+            //判断是否平局
+            let isDraw = false;
+            let winner = "";
+            if (!me.isWinner && !opponent.isWinner) {
+                isDraw = true;
+                winner = "Nobody";
+            } else if (me.isWinner) {
+                winner = me.name;
+            } else if (opponent.isWinner) {
+                winner = opponent.name;
+            }
+            console.log("Round-%s, winner is %s, isGameOver=%s", self.curRoom.curRound, winner, self.curRoom.isGameOver);
+
+            //更新UI
             self.updateLife(me, opponent);
-            self.updateResult(me, opponent);
+            self.updateResult(me, opponent, isDraw);
+            if (cc.isValid(self.gestureSelector)) {
+                self.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
+            }
         })
+    }
+
+    private countdownCallback(leftTs) {
+        let self = this;
+        console.log("Round-%s countdown: %s, isGameOver=%s", self.curRoom.curRound, leftTs, self.curRoom.isGameOver);
+        if (self.curRoom.isGameOver) {
+            return;
+        }
+        //倒计时结束，未选择时随机出拳
+        if (leftTs <= 0) {
+            let gesture = self.gestureSelector.getSelectedGesture();
+            if (gesture == GameManager.GESTURE.NONE) {
+                gesture = parseInt((Math.random() * 3).toString());
+            }
+            self.beginMatch(gesture);
+        }
     }
 
     private onBackBtnClick() {
@@ -194,10 +242,17 @@ export default class GameRoom extends cc.Component {
         let self = this;
         let gesture = self.gestureSelector.getSelectedGesture();
         if (gesture == GameManager.GESTURE.NONE) {
-            CommonPrefabMgr.createToast("Please choose your gesture");
+            CommonPrefabMgr.createToast(Language.common.notSelectGesture);
             return;
         }
         self.beginMatch(gesture);
+    }
+
+    protected onDestroy(): void {
+        let self = this;
+        if (cc.isValid(self.countDown)) {
+            self.countDown.stopCountDown();
+        }
     }
 
 }

@@ -22,6 +22,8 @@ export default class CountDown extends cc.Component {
 
     private numberSprites: cc.Node[] = [];
 
+    private countdownCallback = null;
+
     protected onLoad(): void {
         let self = this;
         self.countDownUtil = new CountDownUtil(self.node, self.COUNT_DOWN_TAG, self.countDownCallback.bind(self));
@@ -32,6 +34,10 @@ export default class CountDown extends cc.Component {
             layout.resizeMode = cc.Layout.ResizeMode.CONTAINER;
             layout.spacingX = 15;
         }
+    }
+
+    public init(countdownCallback) {
+        this.countdownCallback = countdownCallback;
     }
 
     private countDownCallback(leftTs) {
@@ -48,6 +54,9 @@ export default class CountDown extends cc.Component {
         if (leftTs <= 0) {
             self.node.active = false;
         }
+        if (self.countdownCallback) {
+            self.countdownCallback(leftTs);
+        }
     }
 
     private createNumberSprites(count) {
@@ -63,6 +72,7 @@ export default class CountDown extends cc.Component {
 
     public startCountDown(leftTs) {
         let self = this;
+        self.node.active = true;
         self.countDownUtil.startCountDown(leftTs);
     }
 

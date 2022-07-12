@@ -3,7 +3,8 @@ class ResManager {
 
     public static common = {
         prefab: {
-            toast: "common/prefab/Toast"
+            toast: "common/prefab/Toast",
+            userDialog: "common/prefab/UserDialog"
         },
         texture: {
             userAvatars: [
@@ -14,7 +15,7 @@ class ResManager {
                 "common/texture/home_img_head2",
                 "common/texture/home_img_head3",
             ],
-            numbers:[
+            numbers: [
                 "common/texture/number/0",
                 "common/texture/number/1",
                 "common/texture/number/2",
@@ -27,7 +28,7 @@ class ResManager {
                 "common/texture/number/9",
             ]
         }
-    }
+    };
 
     public static room = {
         texture: {
@@ -42,16 +43,18 @@ class ResManager {
                 "gameRoom/texture/paper"
             ],
             life: "gameRoom/texture/life",
+            winner: "gameRoom/texture/winner",
+            draw: "gameRoom/texture/draw"
         },
         animation: {
             vs: "gameRoom/animation/VS"
         },
-        prefab:{
+        prefab: {
             winDialog: "gameRoom/prefab/WinDialog",
             lostDialog: "gameRoom/prefab/LostDialog",
             drawDialog: "gameRoom/prefab/DrawDialog"
         }
-    }
+    };
 
 }
 

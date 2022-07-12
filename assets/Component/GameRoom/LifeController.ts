@@ -12,6 +12,8 @@ import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
 import LabelManager from "../../Framework/UI/LabelManager";
 import NodeManager from "../../Framework/UI/NodeManager";
+import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
+import User from "../../Framework/Business/User";
 
 const {ccclass, property} = cc._decorator;
 
@@ -28,6 +30,7 @@ export default class LifeController extends cc.Component {
     @property(cc.Node)
     lifeCount: cc.Node = null;
 
+    private user: User;
 
     public init(user) {
         if (!user) {
@@ -37,9 +40,10 @@ export default class LifeController extends cc.Component {
         SpriteManager.loadSprite(this.avatarSprite, avatarPath);
         LabelManager.setLabelString(this.nameLabel, user.name);
         this.updateLifeCount(user.life);
+        this.user = user;
     }
 
-    public updateLifeCount(lifeCount) {
+    private updateLifeCount(lifeCount) {
         if (cc.isValid(this.lifeCount)) {
             this.lifeCount.removeAllChildren();
             for (let i = 0; i < lifeCount; i++) {
@@ -49,6 +53,10 @@ export default class LifeController extends cc.Component {
                 SpriteManager.loadSpriteForNode(lifeNode, ResManager.room.texture.life);
             }
         }
+    }
+
+    protected onClickAvatar() {
+        CommonPrefabMgr.showUserDialog(this.user);
     }
 
 }

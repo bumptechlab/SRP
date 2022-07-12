@@ -64,6 +64,7 @@ export default class CountDownUtil {
 
     public stopCountDown() {
         let self = this;
+        self._leftTs = 0;
         if (cc.isValid(self._componentNode)) {
             self._componentNode.stopActionByTag(self.COUNT_DOWN_ACTION_TAG);
         }

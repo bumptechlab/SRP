@@ -40,12 +40,9 @@ export default class GestureSelector extends cc.Component {
         console.log("Select gesture: data=" + data);
         let gesture = parseInt(data);
         this.selectGesture(gesture);
-        if (this.selectCallback) {
-            this.selectCallback(gesture);
-        }
     }
 
-    private selectGesture(gesture: number) {
+    public selectGesture(gesture: number) {
         if (gesture == GameManager.GESTURE.SCISSORS) {
             this.setChosenIconVisible(this.scissorNode, true);
             this.setChosenIconVisible(this.rockNode, false);
@@ -64,6 +61,9 @@ export default class GestureSelector extends cc.Component {
             this.setChosenIconVisible(this.paperNode, false);
         }
         this.selectedGesture = gesture;
+        if (this.selectCallback) {
+            this.selectCallback(gesture);
+        }
     }
 
     private setChosenIconVisible(gestureNode: cc.Node, visible: boolean) {
