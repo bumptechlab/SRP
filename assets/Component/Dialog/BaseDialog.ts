@@ -9,6 +9,9 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import LabelManager from "../../Framework/UI/LabelManager";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import ResManager from "../../Framework/Resources/ResManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -83,7 +86,10 @@ export default class BaseDialog extends cc.Component {
         }
     }
 
-    protected onClickCloseBtn() {
+    protected onClickCloseBtn(event) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         this.dismissDialog();
     }
 }

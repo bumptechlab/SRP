@@ -11,6 +11,9 @@
 import NativeUtil from "../../Framework/Utils/NativeUtil";
 import UserManager from "../../Framework/Business/UserManager";
 import CommonEventName from "../../Framework/Base/CommonEventName";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import ResManager from "../../Framework/Resources/ResManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -39,14 +42,20 @@ export default class Loading extends cc.Component {
         }
     }
 
-    protected onGuestLogin(): void {
+    protected onGuestLogin(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         let user = UserManager.guestLogin();
         if (user) {
             cc.director.loadScene('Hall');
         }
     }
 
-    protected onAppleLogin(): void {
+    protected onAppleLogin(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         NativeUtil.appleLogin();
     }
 

@@ -9,6 +9,9 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import GameManager from "../../Framework/Business/GameManager";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import ResManager from "../../Framework/Resources/ResManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -37,6 +40,9 @@ export default class GestureSelector extends cc.Component {
     }
 
     protected onSelectGesture(event, data) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         console.log("Select gesture: data=" + data);
         let gesture = parseInt(data);
         this.selectGesture(gesture);

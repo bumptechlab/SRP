@@ -17,6 +17,23 @@ class CommonFunction {
         return null;
     }
 
+    //防止按钮多次点击
+    static clickManager(btnNode, timeout = 1500) {
+        if (!cc.isValid(btnNode)) {
+            return;
+        }
+        let noteBtn = btnNode.getComponent(cc.Button);
+        if (cc.isValid(noteBtn)) {
+            noteBtn.interactable = false;
+        }
+        let timer = setTimeout(function () {
+            if (cc.isValid(noteBtn)) {
+                noteBtn.interactable = true;
+            }
+            clearInterval(timer);
+        }, timeout);
+    }
+
 }
 
 export default CommonFunction;

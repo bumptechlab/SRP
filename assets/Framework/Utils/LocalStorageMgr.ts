@@ -1,3 +1,5 @@
+import CommonAudioMgr from "../Base/CommonAudioMgr";
+
 class LocalStorageMgr {
 
 
@@ -54,6 +56,26 @@ class LocalStorageMgr {
             userJson = JSON.stringify(user);
         }
         this.saveData("_login_user", userJson);
+    }
+
+    /**
+     * 音效
+     */
+    public static saveMusicSwitch(music) {
+        this.saveData('_sound', music);
+    }
+
+    public static readMusicSwitch() {
+        return this.readData('_sound');
+    }
+
+    public static saveEffectSwitch(effect) {
+        this.saveData('_effect', effect);
+        CommonAudioMgr.changeEffectSwitch();
+    }
+
+    public static readEffectSwitch() {
+        return this.readData('_effect');
     }
 
 }

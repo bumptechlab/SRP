@@ -10,6 +10,9 @@
 
 import LabelManager from "../../Framework/UI/LabelManager";
 import BaseDialog from "./BaseDialog";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import ResManager from "../../Framework/Resources/ResManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -36,14 +39,20 @@ export default class WinDialog extends BaseDialog {
         super.showDialog();
     }
 
-    protected onClickBack() {
+    protected onClickBack(event) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         this.dismissDialog();
         if (this.backCallback) {
             this.backCallback()
         }
     }
 
-    protected onClickContinue() {
+    protected onClickContinue(event) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         this.dismissDialog();
         if (this.continueCallback) {
             this.continueCallback()

@@ -12,6 +12,8 @@ import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
 import User from "../../Framework/Business/User";
 import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -62,7 +64,10 @@ export default class ResultController extends cc.Component {
         this.user = user;
     }
 
-    protected onClickAvatar() {
+    protected onClickAvatar(event) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         CommonPrefabMgr.showUserDialog(this.user);
     }
 

@@ -18,6 +18,8 @@ import ResManager from "../../Framework/Resources/ResManager";
 import Language from "../../Framework/Resources/Language";
 import NativeUtil from "../../Framework/Utils/NativeUtil";
 import formatStr = cc.js.formatStr;
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import CommonFunction from "../../Framework/Base/CommonFunction";
 
 const {ccclass, property} = cc._decorator;
 
@@ -59,6 +61,8 @@ export default class Hall extends cc.Component {
 
     protected onLoad() {
         let self = this;
+        console.log("=== Hall onLoad ===");
+        CommonAudioMgr.playMusic(ResManager.common.audio.bgm, true, 1);
         self.initUserInfo();
     }
 
@@ -82,19 +86,25 @@ export default class Hall extends cc.Component {
         LabelManager.setLabelString(self.coinLabel, user.coin);
     }
 
-    protected onClickCheckin(): void {
-
+    protected onClickCheckin(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
     }
 
-    protected onClickGuide(): void {
-
+    protected onClickGuide(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
     }
 
-    protected onClickSetting(): void {
-
+    protected onClickSetting(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
     }
 
-    protected onClickRoomOne(): void {
+    protected onClickRoomOne(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         let user = UserManager.getLoginUser();
         if (user.coin < GameManager.roomInfo.roomOne.limit) {
             CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
@@ -103,7 +113,10 @@ export default class Hall extends cc.Component {
         this.setCurShowState(this.STATE_MATCH, GameManager.ROOM_KIND.ONE);
     }
 
-    protected onClickRoomThree(): void {
+    protected onClickRoomThree(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         let user = UserManager.getLoginUser();
         if (user.coin < GameManager.roomInfo.roomThree.limit) {
             CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
@@ -112,7 +125,10 @@ export default class Hall extends cc.Component {
         this.setCurShowState(this.STATE_MATCH, GameManager.ROOM_KIND.THREE);
     }
 
-    protected onClickRoomFive(): void {
+    protected onClickRoomFive(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         let user = UserManager.getLoginUser();
         if (user.coin < GameManager.roomInfo.roomFive.limit) {
             CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
@@ -123,7 +139,10 @@ export default class Hall extends cc.Component {
 
     private currentRoomKind;
 
-    protected onClickBeginMatch(): void {
+    protected onClickBeginMatch(event): void {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         GameManager.enterRoom(this.currentRoomKind);
     }
 
@@ -149,5 +168,9 @@ export default class Hall extends cc.Component {
         if (event.keyCode == cc.macro.KEY.back) {
             NativeUtil.quitGame();
         }
+    }
+
+    protected onDestroy(): void {
+
     }
 }

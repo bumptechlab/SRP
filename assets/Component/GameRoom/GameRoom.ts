@@ -20,6 +20,8 @@ import GestureSelector from "./GestureSelector";
 import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
 import CountDown from "../Common/CountDown";
 import Language from "../../Framework/Resources/Language";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
+import CommonFunction from "../../Framework/Base/CommonFunction";
 
 const {ccclass, property} = cc._decorator;
 
@@ -54,6 +56,7 @@ export default class GameRoom extends cc.Component {
     private COUNT_DOWN_TIME = 10;
 
     protected onLoad(): void {
+        CommonAudioMgr.playMusic(ResManager.common.audio.bgm, true, 1);
         this.curRoom = GameManager.getCurRoom();
         this.initRoom();
         this.playVsAnimation();
@@ -238,8 +241,11 @@ export default class GameRoom extends cc.Component {
 
     }
 
-    protected onClickConfirm() {
+    protected onClickConfirm(event) {
         let self = this;
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         let gesture = self.gestureSelector.getSelectedGesture();
         if (gesture == GameManager.GESTURE.NONE) {
             CommonPrefabMgr.createToast(Language.common.notSelectGesture);

@@ -2,6 +2,10 @@ class ResManager {
 
 
     public static common = {
+        audio: {
+            bgm: "common/audio/bgm",
+            btnClick: "common/audio/btn_click"
+        },
         prefab: {
             toast: "common/prefab/Toast",
             userDialog: "common/prefab/UserDialog"

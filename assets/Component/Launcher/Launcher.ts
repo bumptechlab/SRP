@@ -10,6 +10,7 @@
 
 import NativeUtil from "../../Framework/Utils/NativeUtil";
 import UserManager from "../../Framework/Business/UserManager";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -19,7 +20,9 @@ export default class Launcher extends cc.Component {
 
     protected onLoad() {
         let self = this;
+        CommonAudioMgr.init();
         NativeUtil.init();
+
         //设置背景色
         //cc.director.setClearColor(cc.color().fromHEX("#FFFFFF"));
         cc.Camera.main.backgroundColor = cc.color().fromHEX("#FFFFFF");

@@ -14,6 +14,8 @@ import LabelManager from "../../Framework/UI/LabelManager";
 import NodeManager from "../../Framework/UI/NodeManager";
 import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
 import User from "../../Framework/Business/User";
+import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -55,7 +57,10 @@ export default class LifeController extends cc.Component {
         }
     }
 
-    protected onClickAvatar() {
+    protected onClickAvatar(event) {
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
         CommonPrefabMgr.showUserDialog(this.user);
     }
 
