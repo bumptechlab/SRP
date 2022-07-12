@@ -1,27 +1,27 @@
 window.__require = function e(t, o, n) {
-function a(c, i) {
-if (!o[c]) {
-if (!t[c]) {
-var s = c.split("/");
+function i(r, c) {
+if (!o[r]) {
+if (!t[r]) {
+var s = r.split("/");
 s = s[s.length - 1];
 if (!t[s]) {
 var l = "function" == typeof __require && __require;
-if (!i && l) return l(s, !0);
-if (r) return r(s, !0);
-throw new Error("Cannot find module '" + c + "'");
+if (!c && l) return l(s, !0);
+if (a) return a(s, !0);
+throw new Error("Cannot find module '" + r + "'");
 }
 }
-var u = o[c] = {
+var u = o[r] = {
 exports: {}
 };
-t[c][0].call(u.exports, function(e) {
-return a(t[c][1][e] || e);
+t[r][0].call(u.exports, function(e) {
+return i(t[r][1][e] || e);
 }, u, u.exports, e, t, o, n);
 }
-return o[c].exports;
+return o[r].exports;
 }
-for (var r = "function" == typeof __require && __require, c = 0; c < n.length; c++) a(n[c]);
-return a;
+for (var a = "function" == typeof __require && __require, r = 0; r < n.length; r++) i(n[r]);
+return i;
 }({
 CommonEventName: [ function(e, t, o) {
 "use strict";
@@ -67,17 +67,17 @@ cc._RF.push(t, "6f0dcP9/AFL8J9/1X2O2YAz", "CommonPrefabMgr");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("./CommonFunction"), a = e("../Resources/ResManager"), r = e("../UI/PrefabManager"), c = e("./Global"), i = function() {
+var n = e("./CommonFunction"), i = e("../Resources/ResManager"), a = e("../UI/PrefabManager"), r = e("./Global"), c = e("../../Component/Dialog/WinDialog"), s = function() {
 function e() {}
 e.createToast = function(e, t) {
-void 0 === t && (t = c.default.Config.layerZOrder.Toast);
+void 0 === t && (t = r.default.Config.layerZOrder.Toast);
 var o = n.default.getSceneCanvas();
 if (cc.isValid(o)) {
-var i = o.getChildByName("Toast");
-i && o.removeChild(i);
+var c = o.getChildByName("Toast");
+c && o.removeChild(c);
 }
-var s = a.default.common.prefab.toast;
-r.default.getPrefabIns(s, function(n) {
+var s = i.default.common.prefab.toast;
+a.default.getPrefabIns(s, function(n) {
 if (cc.isValid(o) && n) {
 o.addChild(n, t);
 n.getComponent("Toast") && n.getComponent("Toast").init(e);
@@ -86,15 +86,157 @@ n.y = 0;
 }
 });
 };
+e.showWinDialog = function(e, t, o) {
+var s = n.default.getSceneCanvas();
+a.default.getPrefab(i.default.room.prefab.winDialog, function(n) {
+if (n) {
+var i = cc.instantiate(n);
+if (i) {
+cc.isValid(s) && s.addChild(i, r.default.Config.layerZOrder.Dialog);
+i.getComponent(c.default) && i.getComponent(c.default).showDialog(e, t, o);
+}
+}
+});
+};
+e.showLostDialog = function(e, t, o) {
+var s = n.default.getSceneCanvas();
+a.default.getPrefab(i.default.room.prefab.lostDialog, function(n) {
+if (n) {
+var i = cc.instantiate(n);
+if (i) {
+cc.isValid(s) && s.addChild(i, r.default.Config.layerZOrder.Dialog);
+i.getComponent(c.default) && i.getComponent(c.default).showDialog(e, t, o);
+}
+}
+});
+};
 return e;
 }();
-o.default = i;
+o.default = s;
 cc._RF.pop();
 }, {
+"../../Component/Dialog/WinDialog": "WinDialog",
 "../Resources/ResManager": "ResManager",
 "../UI/PrefabManager": "PrefabManager",
 "./CommonFunction": "CommonFunction",
 "./Global": "Global"
+} ],
+CountDownUtil: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "e178dRT0R1Gp7hz5F9RgpUY", "CountDownUtil");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = function() {
+function e(e, t, o) {
+this.COUNT_DOWN_ACTION_TAG = 9111024911;
+this._componentNode = null;
+this._leftTs = 0;
+this._callback = null;
+this._componentNode = e;
+this._callback = o;
+this.COUNT_DOWN_ACTION_TAG = t;
+this.stopCountDown();
+}
+e.prototype.startCountDown = function(e) {
+if (this._leftTs > 0) {
+this._leftTs = e;
+this.callback(e);
+} else if (e <= 0) ; else {
+this.stopCountDown();
+if (cc.isValid(this._componentNode)) {
+this.callback(e);
+this._componentNode.runAction(this.countDownAction(e));
+}
+}
+};
+e.prototype.getLeftTs = function() {
+return this._leftTs;
+};
+e.prototype.countDownAction = function(e) {
+var t = this;
+t._leftTs = e;
+var o = cc.repeatForever(cc.sequence(cc.delayTime(1), cc.callFunc(function() {
+if (t._leftTs <= 0) t.callback(0); else {
+t._leftTs--;
+cc.isValid(t._componentNode) && (t._leftTs > 0 ? t.callback(t._leftTs) : t.callback(0));
+}
+})));
+o.setTag(t.COUNT_DOWN_ACTION_TAG);
+return o;
+};
+e.prototype.stopCountDown = function() {
+cc.isValid(this._componentNode) && this._componentNode.stopActionByTag(this.COUNT_DOWN_ACTION_TAG);
+};
+e.prototype.callback = function(e) {
+if (this._callback) {
+e <= 0 && this.stopCountDown();
+this._callback(e);
+}
+};
+return e;
+}();
+o.default = n;
+cc._RF.pop();
+}, {} ],
+CountDown: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "0a1d77xStpHepXdigZVVvNO", "CountDown");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/Utils/CountDownUtil"), i = e("../../Framework/UI/SpriteManager"), a = e("../../Framework/Resources/ResManager"), r = cc._decorator, c = r.ccclass, s = (r.property, 
+function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.COUNT_DOWN_TAG = 12030;
+t.countDownUtil = null;
+t.numberSprites = [];
+return t;
+}
+t.prototype.onLoad = function() {
+this.countDownUtil = new n.default(this.node, this.COUNT_DOWN_TAG, this.countDownCallback.bind(this));
+var e = this.node.getComponent(cc.Layout);
+if (!e) {
+(e = this.node.addComponent(cc.Layout)).type = cc.Layout.Type.HORIZONTAL;
+e.resizeMode = cc.Layout.ResizeMode.CONTAINER;
+e.spacingX = 15;
+}
+};
+t.prototype.countDownCallback = function(e) {
+var t = e.toString();
+this.numberSprites.length != t.length && this.createNumberSprites(t.length);
+for (var o = 0; o < t.length; o++) {
+var n = parseInt(t.substr(o, 1)), r = a.default.common.texture.numbers[n];
+i.default.loadSpriteForNode(this.numberSprites[o], r);
+}
+e <= 0 && (this.node.active = !1);
+};
+t.prototype.createNumberSprites = function(e) {
+this.node.removeAllChildren();
+this.numberSprites = [];
+for (var t = 0; t < e; t++) {
+var o = i.default.createSpriteNode("number" + t);
+this.node.addChild(o);
+this.numberSprites[t] = o;
+}
+};
+t.prototype.startCountDown = function(e) {
+this.countDownUtil.startCountDown(e);
+};
+t.prototype.stopCountDown = function() {
+this.countDownUtil.stopCountDown();
+this.node.active = !1;
+};
+return t = __decorate([ c ], t);
+}(cc.Component));
+o.default = s;
+cc._RF.pop();
+}, {
+"../../Framework/Resources/ResManager": "ResManager",
+"../../Framework/UI/SpriteManager": "SpriteManager",
+"../../Framework/Utils/CountDownUtil": "CountDownUtil"
 } ],
 GameManager: [ function(e, t, o) {
 "use strict";
@@ -102,54 +244,185 @@ cc._RF.push(t, "4f2a86rJIhCIoZ9hUBSfFat", "GameManager");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("./UserManager"), a = function() {
+var n = e("./UserManager"), i = e("../../Component/GameRoom/GameRoomController"), a = e("../Base/CommonPrefabMgr"), r = e("../Resources/Language"), c = function() {
 function e() {}
 e.createOpponent = function() {
 var e = n.default.getLoginUser(), t = n.default.createRandomUser(!0);
 do {
 t = n.default.createRandomUser(!0);
-} while (e.id == t.id);
-this.setCurOpponent(t);
+} while (e.id == t.id || e.avatar == t.avatar || e.name == t.name);
 return t;
 };
-e.setCurOpponent = function(e) {
-this.curOpponent = e;
+e.enterRoom = function(e) {
+var t = this.createRoom(e);
+if (null != t) {
+cc.director.loadScene("GameRoom");
+return t;
+}
+a.default.createToast(r.default.common.notEnoughMoney);
 };
-e.getCurOpponent = function() {
-return this.curOpponent;
+e.createRoom = function(e) {
+var t = n.default.getLoginUser();
+if (t.coin < this.betAmount) return null;
+var o = this.createOpponent(), a = new i.default();
+a.initRoom(e, t, o);
+var r = t.coin - this.betAmount;
+a.updateMyCoin(r);
+this.setCurRoom(a);
+return a;
 };
-e.setCurRoomKind = function(e) {
-this.curRoomKind = e;
+e.setCurRoom = function(e) {
+this.curRoom = e;
 };
-e.getCurRoomKind = function() {
-return this.curRoomKind;
-};
-e.updateOpponentCoin = function(e) {
-this.curOpponent && (this.curOpponent.coin = e);
+e.getCurRoom = function() {
+return this.curRoom;
 };
 e.ROOM_KIND = cc.Enum({
 ONE: 0,
 THREE: 1,
 FIVE: 2
 });
+e.GESTURE = cc.Enum({
+NONE: 100,
+SCISSORS: 0,
+ROCK: 1,
+PAPER: 2
+});
 e.roomInfo = {
 roomOne: {
-limit: 1e3
+limit: 10
 },
 roomThree: {
-limit: 1e3
+limit: 50
 },
 roomFive: {
-limit: 1e3
+limit: 100
 }
 };
 e.betAmount = 10;
 return e;
 }();
+o.default = c;
+cc._RF.pop();
+}, {
+"../../Component/GameRoom/GameRoomController": "GameRoomController",
+"../Base/CommonPrefabMgr": "CommonPrefabMgr",
+"../Resources/Language": "Language",
+"./UserManager": "UserManager"
+} ],
+GameRoomController: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "3524diF/KxGiohDojgTNTGM", "GameRoomController");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/Business/UserManager"), i = e("../../Framework/Business/GameManager"), a = function() {
+function e() {
+this.me = null;
+this.opponent = null;
+this.roomKind = 0;
+this.winRound = 0;
+this.curRound = 0;
+this.isGameOver = !1;
+}
+e.prototype.initRoom = function(e, t, o) {
+this.roomKind = e;
+this.me = t;
+this.opponent = o;
+this.resetRoom();
+};
+e.prototype.resetRoom = function() {
+var e = 0, t = 0;
+if (this.roomKind == i.default.ROOM_KIND.ONE) {
+e = 1;
+t = 1;
+} else if (this.roomKind == i.default.ROOM_KIND.THREE) {
+e = 3;
+t = 2;
+} else if (this.roomKind == i.default.ROOM_KIND.FIVE) {
+e = 5;
+t = 3;
+}
+var o = this.me;
+o.life = e;
+o.isWinner = !1;
+o.gesture = i.default.GESTURE.NONE;
+o.winCount = 0;
+var n = this.opponent;
+n.life = e;
+n.isWinner = !1;
+n.gesture = i.default.GESTURE.NONE;
+n.winCount = 0;
+this.winRound = t;
+this.curRound = 0;
+this.isGameOver = !1;
+};
+e.prototype.updateOpponentCoin = function(e) {
+this.opponent && (this.opponent.coin = e);
+};
+e.prototype.updateMyCoin = function(e) {
+this.me && (this.me.coin = e);
+n.default.updateUserCoin(e);
+};
+e.prototype.beginMatch = function(e, t) {
+if (this.me && this.opponent) if (this.isGameOver) {
+console.log("Game Over");
+t && t(this.me, this.opponent, this.isGameOver);
+} else {
+this.curRound++;
+this.me.gesture = e;
+this.opponent.gesture = parseInt((3 * Math.random()).toString());
+this.matchGame(this.me, this.opponent);
+if (this.me.isWinner) {
+this.me.winCount++;
+this.opponent.life--;
+} else if (this.opponent.isWinner) {
+this.opponent.winCount++;
+this.me.life--;
+}
+if (this.me.winCount >= this.winRound) {
+this.me.isWinner = !0;
+this.opponent.isWinner = !1;
+this.isGameOver = !0;
+} else if (this.opponent.winCount >= this.winRound) {
+this.me.isWinner = !1;
+this.opponent.isWinner = !0;
+this.isGameOver = !0;
+}
+t && t(this.me, this.opponent, this.isGameOver);
+} else console.log("Not enough of gamers, can not play the game");
+};
+e.prototype.matchGame = function(e, t) {
+if (e.gesture == t.gesture) {
+e.isWinner = !1;
+t.isWinner = !1;
+} else if (e.gesture == i.default.GESTURE.PAPER && t.gesture == i.default.GESTURE.ROCK) {
+e.isWinner = !0;
+t.isWinner = !1;
+} else if (e.gesture == i.default.GESTURE.PAPER && t.gesture == i.default.GESTURE.SCISSORS) {
+e.isWinner = !1;
+t.isWinner = !0;
+} else if (e.gesture == i.default.GESTURE.ROCK && t.gesture == i.default.GESTURE.PAPER) {
+e.isWinner = !1;
+t.isWinner = !0;
+} else if (e.gesture == i.default.GESTURE.ROCK && t.gesture == i.default.GESTURE.SCISSORS) {
+e.isWinner = !0;
+t.isWinner = !1;
+} else if (e.gesture == i.default.GESTURE.SCISSORS && t.gesture == i.default.GESTURE.ROCK) {
+e.isWinner = !1;
+t.isWinner = !0;
+} else if (e.gesture == i.default.GESTURE.SCISSORS && t.gesture == i.default.GESTURE.PAPER) {
+e.isWinner = !0;
+t.isWinner = !1;
+}
+};
+return e;
+}();
 o.default = a;
 cc._RF.pop();
 }, {
-"./UserManager": "UserManager"
+"../../Framework/Business/GameManager": "GameManager",
+"../../Framework/Business/UserManager": "UserManager"
 } ],
 GameRoom: [ function(e, t, o) {
 "use strict";
@@ -157,32 +430,189 @@ cc._RF.push(t, "2bba1H6FkFBErZNu3KKrYYJ", "GameRoom");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/UI/SpriteManager"), a = e("../../Framework/Resources/ResManager"), r = e("../../Framework/Business/GameManager"), c = cc._decorator, i = c.ccclass, s = c.property, l = function(e) {
+var n = e("../../Framework/UI/SpriteManager"), i = e("../../Framework/Resources/ResManager"), a = e("../../Framework/Business/GameManager"), r = e("./LifeController"), c = e("./ResultController"), s = e("../../Framework/UI/SpineManager"), l = e("./GestureSelector"), u = e("../../Framework/Base/CommonPrefabMgr"), d = e("../Common/CountDown"), p = e("../../Framework/Resources/Language"), f = cc._decorator, m = f.ccclass, g = f.property, h = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
 t.titleSprite = null;
+t.meLifeController = null;
+t.opponentLifeController = null;
+t.meResultController = null;
+t.opponentResultController = null;
+t.vsSkeleton = null;
+t.gestureSelector = null;
+t.countDown = null;
 return t;
 }
 t.prototype.onLoad = function() {
+this.curRoom = a.default.getCurRoom();
 this.initRoom();
+this.playVsAnimation();
+};
+t.prototype.startNewGame = function() {
+var e = a.default.createRoom(this.curRoom.roomKind);
+if (null != e) {
+this.curRoom = e;
+this.initRoom();
+this.playVsAnimation();
+} else {
+u.default.createToast(p.default.common.notEnoughMoney);
+this.onBackBtnClick();
+}
 };
 t.prototype.initRoom = function() {
-var e = r.default.getCurRoomKind();
-n.default.loadSprite(this.titleSprite, a.default.room.texture.roomTitle[e]);
+n.default.loadSprite(this.titleSprite, i.default.room.texture.roomTitle[this.curRoom.roomKind]);
+var e = this.curRoom.me, t = this.curRoom.opponent;
+this.updateLife(e, t);
+this.updateResult(e, t);
+this.setControlVisible(!1);
+cc.isValid(this.gestureSelector) && this.gestureSelector.init(this.onSelectGesture);
 };
-t.prototype.onClickBack = function() {
+t.prototype.setControlVisible = function(e) {
+cc.isValid(this.meLifeController) && (this.meLifeController.node.active = e);
+cc.isValid(this.opponentLifeController) && (this.opponentLifeController.node.active = e);
+cc.isValid(this.meResultController) && (this.meResultController.node.active = e);
+cc.isValid(this.opponentResultController) && (this.opponentResultController.node.active = e);
+cc.isValid(this.gestureSelector) && (this.gestureSelector.node.active = e);
+cc.isValid(this.countDown) && (this.countDown.node.active = e);
+};
+t.prototype.playVsAnimation = function() {
+var e = this;
+s.default.loadSpine(this.vsSkeleton, i.default.room.animation.vs, {
+name: "animation",
+loop: !1
+}, function() {
+e.setControlVisible(!0);
+});
+};
+t.prototype.updateLife = function(e, t) {
+cc.isValid(this.meLifeController) && this.meLifeController.init(e);
+cc.isValid(this.opponentLifeController) && this.opponentLifeController.init(t);
+};
+t.prototype.updateResult = function(e, t) {
+cc.isValid(this.meResultController) && this.meResultController.init(e);
+cc.isValid(this.opponentResultController) && this.opponentResultController.init(t);
+};
+t.prototype.beginMatch = function(e) {
+var t = this;
+t.curRoom.beginMatch(e, function(e, o, n) {
+if (n) {
+if (e.isWinner) {
+var i = 2 * a.default.betAmount;
+t.curRoom.updateMyCoin(e.coin + i);
+u.default.showWinDialog(i, t.onBackBtnClick.bind(t), t.onContinueBtnClick.bind(t));
+} else if (o.isWinner) {
+var r = -a.default.betAmount, c = 2 * a.default.betAmount;
+t.curRoom.updateOpponentCoin(o.coin + c);
+u.default.showLostDialog(r, t.onBackBtnClick.bind(t), t.onContinueBtnClick.bind(t));
+}
+} else cc.isValid(t.countDown) && t.countDown.startCountDown(10);
+t.updateLife(e, o);
+t.updateResult(e, o);
+});
+};
+t.prototype.onBackBtnClick = function() {
+this.curRoom.resetRoom();
 cc.director.loadScene("Hall");
 };
-__decorate([ s(cc.Sprite) ], t.prototype, "titleSprite", void 0);
-return t = __decorate([ i ], t);
+t.prototype.onContinueBtnClick = function() {
+this.startNewGame();
+};
+t.prototype.onSelectGesture = function(e) {};
+t.prototype.onClickConfirm = function() {
+var e = this.gestureSelector.getSelectedGesture();
+e != a.default.GESTURE.NONE ? this.beginMatch(e) : u.default.createToast("Please choose your gesture");
+};
+__decorate([ g(cc.Sprite) ], t.prototype, "titleSprite", void 0);
+__decorate([ g(r.default) ], t.prototype, "meLifeController", void 0);
+__decorate([ g(r.default) ], t.prototype, "opponentLifeController", void 0);
+__decorate([ g(c.default) ], t.prototype, "meResultController", void 0);
+__decorate([ g(c.default) ], t.prototype, "opponentResultController", void 0);
+__decorate([ g(sp.Skeleton) ], t.prototype, "vsSkeleton", void 0);
+__decorate([ g(l.default) ], t.prototype, "gestureSelector", void 0);
+__decorate([ g(d.default) ], t.prototype, "countDown", void 0);
+return t = __decorate([ m ], t);
 }(cc.Component);
-o.default = l;
+o.default = h;
 cc._RF.pop();
 }, {
+"../../Framework/Base/CommonPrefabMgr": "CommonPrefabMgr",
 "../../Framework/Business/GameManager": "GameManager",
+"../../Framework/Resources/Language": "Language",
 "../../Framework/Resources/ResManager": "ResManager",
-"../../Framework/UI/SpriteManager": "SpriteManager"
+"../../Framework/UI/SpineManager": "SpineManager",
+"../../Framework/UI/SpriteManager": "SpriteManager",
+"../Common/CountDown": "CountDown",
+"./GestureSelector": "GestureSelector",
+"./LifeController": "LifeController",
+"./ResultController": "ResultController"
+} ],
+GestureSelector: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "33eb6O1zOtInZ/Km6ef/pdq", "GestureSelector");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/Business/GameManager"), i = cc._decorator, a = i.ccclass, r = i.property, c = function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.scissorNode = null;
+t.rockNode = null;
+t.paperNode = null;
+return t;
+}
+t.prototype.onLoad = function() {
+this.selectedGesture = n.default.GESTURE.NONE;
+this.selectGesture(this.selectedGesture);
+};
+t.prototype.init = function(e) {
+this.selectCallback = e;
+};
+t.prototype.onSelectGesture = function(e, t) {
+console.log("Select gesture: data=" + t);
+var o = parseInt(t);
+this.selectGesture(o);
+this.selectCallback && this.selectCallback(o);
+};
+t.prototype.selectGesture = function(e) {
+if (e == n.default.GESTURE.SCISSORS) {
+this.setChosenIconVisible(this.scissorNode, !0);
+this.setChosenIconVisible(this.rockNode, !1);
+this.setChosenIconVisible(this.paperNode, !1);
+} else if (e == n.default.GESTURE.ROCK) {
+this.setChosenIconVisible(this.scissorNode, !1);
+this.setChosenIconVisible(this.rockNode, !0);
+this.setChosenIconVisible(this.paperNode, !1);
+} else if (e == n.default.GESTURE.PAPER) {
+this.setChosenIconVisible(this.scissorNode, !1);
+this.setChosenIconVisible(this.rockNode, !1);
+this.setChosenIconVisible(this.paperNode, !0);
+} else {
+this.setChosenIconVisible(this.scissorNode, !1);
+this.setChosenIconVisible(this.rockNode, !1);
+this.setChosenIconVisible(this.paperNode, !1);
+}
+this.selectedGesture = e;
+};
+t.prototype.setChosenIconVisible = function(e, t) {
+if (cc.isValid(e)) {
+var o = e.getChildByName("chosen");
+cc.isValid(o) && (o.active = t);
+}
+};
+t.prototype.getSelectedGesture = function() {
+return this.selectedGesture;
+};
+__decorate([ r(cc.Node) ], t.prototype, "scissorNode", void 0);
+__decorate([ r(cc.Node) ], t.prototype, "rockNode", void 0);
+__decorate([ r(cc.Node) ], t.prototype, "paperNode", void 0);
+return t = __decorate([ a ], t);
+}(cc.Component);
+o.default = c;
+cc._RF.pop();
+}, {
+"../../Framework/Business/GameManager": "GameManager"
 } ],
 Global: [ function(e, t, o) {
 "use strict";
@@ -194,7 +624,8 @@ var n = function() {
 function e() {}
 e.Config = {
 layerZOrder: {
-Toast: 8e3
+Toast: 8e3,
+Dialog: 7e3
 }
 };
 return e;
@@ -208,7 +639,7 @@ cc._RF.push(t, "c5e60FAkL5JKZtwdy83I9mx", "Hall");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/Business/UserManager"), a = e("../../Framework/UI/LabelManager"), r = e("../../Framework/Business/GameManager"), c = e("../../Framework/Base/CommonPrefabMgr"), i = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = cc.js.formatStr, f = e("../../Framework/Utils/NativeUtil"), d = cc._decorator, p = d.ccclass, m = d.property, g = function(e) {
+var n = e("../../Framework/Business/UserManager"), i = e("../../Framework/UI/LabelManager"), a = e("../../Framework/Business/GameManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = e("../../Framework/Utils/NativeUtil"), d = cc.js.formatStr, p = cc._decorator, f = p.ccclass, m = p.property, g = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -237,27 +668,25 @@ cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.initUserInfo = function() {
 var e = n.default.getLoginUser(), t = s.default.common.texture.userAvatars[e.avatar];
-i.default.loadSprite(this.avatarSprite, t);
-a.default.setLabelString(this.nameLabel, e.name);
-a.default.setLabelString(this.idLabel, e.id);
-a.default.setLabelString(this.coinLabel, e.coin);
+c.default.loadSprite(this.avatarSprite, t);
+i.default.setLabelString(this.nameLabel, e.name);
+i.default.setLabelString(this.idLabel, e.id);
+i.default.setLabelString(this.coinLabel, e.coin);
 };
 t.prototype.onClickCheckin = function() {};
 t.prototype.onClickGuide = function() {};
 t.prototype.onClickSetting = function() {};
 t.prototype.onClickRoomOne = function() {
-n.default.getLoginUser().coin < r.default.roomInfo.roomOne.limit ? c.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, r.default.ROOM_KIND.ONE);
+n.default.getLoginUser().coin < a.default.roomInfo.roomOne.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, a.default.ROOM_KIND.ONE);
 };
 t.prototype.onClickRoomThree = function() {
-n.default.getLoginUser().coin < r.default.roomInfo.roomThree.limit ? c.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, r.default.ROOM_KIND.THREE);
+n.default.getLoginUser().coin < a.default.roomInfo.roomThree.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, a.default.ROOM_KIND.THREE);
 };
 t.prototype.onClickRoomFive = function() {
-n.default.getLoginUser().coin < r.default.roomInfo.roomFive.limit ? c.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, r.default.ROOM_KIND.FIVE);
+n.default.getLoginUser().coin < a.default.roomInfo.roomFive.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, a.default.ROOM_KIND.FIVE);
 };
 t.prototype.onClickBeginMatch = function() {
-r.default.createOpponent();
-r.default.setCurRoomKind(this.currentRoomKind);
-cc.director.loadScene("GameRoom");
+a.default.enterRoom(this.currentRoomKind);
 };
 t.prototype.setCurShowState = function(e, t) {
 if (e == this.STATE_HALL) {
@@ -269,14 +698,14 @@ this.hallLayout.active = !1;
 this.homeLogo.active = !1;
 this.matchLayout.active = !0;
 var o = n.default.getLoginUser();
-i.default.loadSprite(this.roomTitleSprite, s.default.room.texture.roomTitle[t]);
-i.default.loadSprite(this.meMatchAvatarSprite, s.default.common.texture.userAvatars[o.avatar]);
-a.default.setLabelString(this.betTipsLabel, u(l.default.common.betAmountTips, r.default.betAmount));
+c.default.loadSprite(this.roomTitleSprite, s.default.room.texture.roomTitle[t]);
+c.default.loadSprite(this.meMatchAvatarSprite, s.default.common.texture.userAvatars[o.avatar]);
+i.default.setLabelString(this.betTipsLabel, d(l.default.common.betAmountTips, a.default.betAmount));
 this.currentRoomKind = t;
 }
 };
 t.prototype.onKeyUp = function(e) {
-e.keyCode == cc.macro.KEY.back && f.default.quitGame();
+e.keyCode == cc.macro.KEY.back && u.default.quitGame();
 };
 __decorate([ m(cc.Node) ], t.prototype, "hallLayout", void 0);
 __decorate([ m(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
@@ -288,7 +717,7 @@ __decorate([ m(cc.Node) ], t.prototype, "matchLayout", void 0);
 __decorate([ m(cc.Sprite) ], t.prototype, "roomTitleSprite", void 0);
 __decorate([ m(cc.Sprite) ], t.prototype, "meMatchAvatarSprite", void 0);
 __decorate([ m(cc.Label) ], t.prototype, "betTipsLabel", void 0);
-return t = __decorate([ p ], t);
+return t = __decorate([ f ], t);
 }(cc.Component);
 o.default = g;
 cc._RF.pop();
@@ -404,11 +833,11 @@ e ? cc.error(e.message || e) : o && "function" == typeof t && t(o);
 });
 };
 e.loadFont = function(e, t, o, n) {
-cc.loader.loadRes(t, cc.Font, function(t, a) {
+cc.loader.loadRes(t, cc.Font, function(t, i) {
 if (t) cc.error(t.message || t); else if (cc.isValid(e)) {
 e instanceof cc.Label || e instanceof cc.Node && (e = e.getComponent(cc.Label));
 if (cc.isValid(e)) {
-e.font = a;
+e.font = i;
 (o || 0 == o) && (e.spacingX = o);
 "function" == typeof n && n();
 }
@@ -443,7 +872,7 @@ cc._RF.push(t, "cc4f8FH8aJCdrQBQuLC05CZ", "Launcher");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/Utils/NativeUtil"), a = e("../../Framework/Business/UserManager"), r = cc._decorator, c = r.ccclass, i = (r.property, 
+var n = e("../../Framework/Utils/NativeUtil"), i = e("../../Framework/Business/UserManager"), a = cc._decorator, r = a.ccclass, c = (a.property, 
 function(e) {
 __extends(t, e);
 function t() {
@@ -452,7 +881,7 @@ return null !== e && e.apply(this, arguments) || this;
 t.prototype.onLoad = function() {
 n.default.init();
 cc.Camera.main.backgroundColor = cc.color().fromHEX("#FFFFFF");
-a.default.initLoginUser() ? this.gotoHallDelay() : this.gotoLoadingDelay();
+i.default.initLoginUser() ? this.gotoHallDelay() : this.gotoLoadingDelay();
 };
 t.prototype.gotoLoadingDelay = function() {
 setTimeout(function() {
@@ -465,13 +894,59 @@ cc.director.loadScene("Hall");
 }, 3e3);
 };
 t.prototype.start = function() {};
-return t = __decorate([ c ], t);
+return t = __decorate([ r ], t);
 }(cc.Component));
-o.default = i;
+o.default = c;
 cc._RF.pop();
 }, {
 "../../Framework/Business/UserManager": "UserManager",
 "../../Framework/Utils/NativeUtil": "NativeUtil"
+} ],
+LifeController: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "35c08m9ktRI3qnxKf4ysetX", "LifeController");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/UI/SpriteManager"), i = e("../../Framework/Resources/ResManager"), a = e("../../Framework/UI/LabelManager"), r = cc._decorator, c = r.ccclass, s = r.property, l = function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.avatarSprite = null;
+t.nameLabel = null;
+t.lifeCount = null;
+return t;
+}
+t.prototype.init = function(e) {
+if (e) {
+var t = i.default.common.texture.userAvatars[e.avatar];
+n.default.loadSprite(this.avatarSprite, t);
+a.default.setLabelString(this.nameLabel, e.name);
+this.updateLifeCount(e.life);
+}
+};
+t.prototype.updateLifeCount = function(e) {
+if (cc.isValid(this.lifeCount)) {
+this.lifeCount.removeAllChildren();
+for (var t = 0; t < e; t++) {
+var o = n.default.createSpriteNode("life");
+o.y = 5;
+this.lifeCount.addChild(o);
+n.default.loadSpriteForNode(o, i.default.room.texture.life);
+}
+}
+};
+__decorate([ s(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
+__decorate([ s(cc.Label) ], t.prototype, "nameLabel", void 0);
+__decorate([ s(cc.Node) ], t.prototype, "lifeCount", void 0);
+return t = __decorate([ c ], t);
+}(cc.Component);
+o.default = l;
+cc._RF.pop();
+}, {
+"../../Framework/Resources/ResManager": "ResManager",
+"../../Framework/UI/LabelManager": "LabelManager",
+"../../Framework/UI/SpriteManager": "SpriteManager"
 } ],
 Loading: [ function(e, t, o) {
 "use strict";
@@ -479,7 +954,7 @@ cc._RF.push(t, "b7e4780HsVNypzwv6PTvZdF", "Loading");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../../Framework/Utils/NativeUtil"), a = e("../../Framework/Business/UserManager"), r = e("../../Framework/Base/CommonEventName"), c = cc._decorator, i = c.ccclass, s = (c.property, 
+var n = e("../../Framework/Utils/NativeUtil"), i = e("../../Framework/Business/UserManager"), a = e("../../Framework/Base/CommonEventName"), r = cc._decorator, c = r.ccclass, s = (r.property, 
 function(e) {
 __extends(t, e);
 function t() {
@@ -487,24 +962,24 @@ return null !== e && e.apply(this, arguments) || this;
 }
 t.prototype.onLoad = function() {};
 t.prototype.onEnable = function() {
-cc.director.on(r.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
+cc.director.on(a.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
 cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.onDisable = function() {
-cc.director.off(r.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
+cc.director.off(a.default.EVENT_APPLE_LOGIN_RESULT, this.onAppLoginResult, this);
 cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
 };
 t.prototype.onKeyUp = function(e) {
 e.keyCode == cc.macro.KEY.back && n.default.quitGame();
 };
 t.prototype.onGuestLogin = function() {
-a.default.guestLogin() && cc.director.loadScene("Hall");
+i.default.guestLogin() && cc.director.loadScene("Hall");
 };
 t.prototype.onAppleLogin = function() {
 n.default.appleLogin();
 };
 t.prototype.onAppLoginResult = function(e, t) {};
-return t = __decorate([ i ], t);
+return t = __decorate([ c ], t);
 }(cc.Component));
 o.default = s;
 cc._RF.pop();
@@ -562,7 +1037,7 @@ cc._RF.push(t, "9cb6byZwNZPHKjrtMtR8XGx", "NativeUtil");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("./LocalStorageMgr"), a = e("../Base/CommonEventName"), r = function() {
+var n = e("./LocalStorageMgr"), i = e("../Base/CommonEventName"), a = function() {
 function e() {}
 e.init = function() {
 this.nativeClassName = n.default.getNativeClassName();
@@ -602,12 +1077,12 @@ jsb.reflection.callStaticMethod(t, o);
 };
 return e;
 }();
-o.default = r;
+o.default = a;
 cc.onAppleLoginResult = function(e, t) {
 console.log("onAppleLoginResult: state=%s, data=%s", e, t);
 var o = {};
 t && (o = JSON.parse(t));
-cc.director.emit(a.default.EVENT_APPLE_LOGIN_RESULT, e, o);
+cc.director.emit(i.default.EVENT_APPLE_LOGIN_RESULT, e, o);
 };
 cc._RF.pop();
 }, {
@@ -642,16 +1117,16 @@ if (cc.isValid(e) && t) {
 if (t.sprite) {
 console.log("NodeManager ======= 图片加载开始，父节点[%s] =======", e.name);
 for (var n = 0; n < t.sprite.length; n++) {
-var a = t.sprite[n].nodePath, r = t.sprite[n].resPath, c = t.sprite[n].spriteName, i = null;
-i = "" == a || "/" == a ? e : cc.find(a, e);
-if (cc.isValid(i) && r) {
-var s = this.getAssetByPath(r, "sprite", c, o);
+var i = t.sprite[n].nodePath, a = t.sprite[n].resPath, r = t.sprite[n].spriteName, c = null;
+c = "" == i || "/" == i ? e : cc.find(i, e);
+if (cc.isValid(c) && a) {
+var s = this.getAssetByPath(a, "sprite", r, o);
 if (s) {
-console.log("NodeManager ==》子节点[%s]，从内存中加载图片：%s", a, r);
-UIDepend.SpriteManager.setSpriteFrame(i, s);
+console.log("NodeManager ==》子节点[%s]，从内存中加载图片：%s", i, a);
+UIDepend.SpriteManager.setSpriteFrame(c, s);
 } else {
-console.log("NodeManager ==》子节点[%s]，内存中找不到图片，动态加载：%s", a, r);
-c ? UIDepend.SpriteManager.loadSpriteAtlasForNode(i, r, c) : UIDepend.SpriteManager.loadSpriteForNode(i, r);
+console.log("NodeManager ==》子节点[%s]，内存中找不到图片，动态加载：%s", i, a);
+r ? UIDepend.SpriteManager.loadSpriteAtlasForNode(c, a, r) : UIDepend.SpriteManager.loadSpriteForNode(c, a);
 }
 }
 }
@@ -659,17 +1134,17 @@ c ? UIDepend.SpriteManager.loadSpriteAtlasForNode(i, r, c) : UIDepend.SpriteMana
 if (t.font) {
 console.log("NodeManager ======= 字体加载开始，父节点[%s] =======", e.name);
 for (n = 0; n < t.font.length; n++) {
-a = t.font[n].nodePath, r = t.font[n].resPath;
+i = t.font[n].nodePath, a = t.font[n].resPath;
 var l = t.font[n].spacingX, u = null;
-u = "" == a || "/" == a ? e : cc.find(a, e);
-if (cc.isValid(u) && r) {
-var f = this.getAssetByPath(r, "font");
-if (f) {
-console.log("NodeManager ==》子节点[%s]，从内存中加载字体：%s", a, r);
-UIDepend.LabelManager.setFont(u, f, l);
+u = "" == i || "/" == i ? e : cc.find(i, e);
+if (cc.isValid(u) && a) {
+var d = this.getAssetByPath(a, "font");
+if (d) {
+console.log("NodeManager ==》子节点[%s]，从内存中加载字体：%s", i, a);
+UIDepend.LabelManager.setFont(u, d, l);
 } else {
-console.log("NodeManager ==》子节点[%s]，内存中找不到字体，动态加载：%s", a, r);
-UIDepend.LabelManager.loadFont(u, r, l);
+console.log("NodeManager ==》子节点[%s]，内存中找不到字体，动态加载：%s", i, a);
+UIDepend.LabelManager.loadFont(u, a, l);
 }
 }
 }
@@ -681,15 +1156,15 @@ if (!e) return null;
 if (o && "sprite" == t) {
 return UIDepend.SpriteManager.getSpriteFromCommonAtlas(e, o);
 }
-var a = CommonDepend.ResourceManager.getResByGameId(n);
-if (!a) return null;
-var r = "";
+var i = CommonDepend.ResourceManager.getResByGameId(n);
+if (!i) return null;
+var a = "";
 if (-1 != e.indexOf("/")) {
-var c = e.split("/");
-r = c[c.length - 1];
-} else r = e;
-return a.find(function(e) {
-return "sprite" == t ? e instanceof cc.SpriteFrame && e.name == r : "font" == t && (e instanceof cc.Font && e.name == r);
+var r = e.split("/");
+a = r[r.length - 1];
+} else a = e;
+return i.find(function(e) {
+return "sprite" == t ? e instanceof cc.SpriteFrame && e.name == a : "font" == t && (e instanceof cc.Font && e.name == a);
 });
 };
 e.setLabelColor = function(e, t) {
@@ -718,10 +1193,10 @@ e.loadPrefab = function(e, t, o) {
 o || (o = CommonDepend.CommonFunction.getSceneCanvas());
 cc.loader.loadRes(e, function(e, n) {
 if (e) cc.error(e.message || e); else if (n && cc.isValid(o)) {
-var a = cc.instantiate(n);
-if (a) {
-o.addChild(a, Cocos20.Global.layerZOrder.Dialog);
-"function" == typeof t && t(a);
+var i = cc.instantiate(n);
+if (i) {
+o.addChild(i, Cocos20.Global.layerZOrder.Dialog);
+"function" == typeof t && t(i);
 }
 }
 });
@@ -740,8 +1215,8 @@ if (e) {
 cc.error(e.message || e);
 o && o();
 } else if (n) {
-var a = cc.instantiate(n);
-a ? "function" == typeof t && t(a) : o && o();
+var i = cc.instantiate(n);
+i ? "function" == typeof t && t(i) : o && o();
 } else o && o();
 });
 };
@@ -764,12 +1239,22 @@ toast: "common/prefab/Toast"
 },
 texture: {
 userAvatars: [ "common/texture/home_img_head1", "common/texture/home_img_head4" ],
-userAvatarsVS: [ "common/texture/home_img_head2", "common/texture/home_img_head3" ]
+userAvatarsVS: [ "common/texture/home_img_head2", "common/texture/home_img_head3" ],
+numbers: [ "common/texture/number/0", "common/texture/number/1", "common/texture/number/2", "common/texture/number/3", "common/texture/number/4", "common/texture/number/5", "common/texture/number/6", "common/texture/number/7", "common/texture/number/8", "common/texture/number/9" ]
 }
 };
 e.room = {
 texture: {
-roomTitle: [ "gameRoom/texture/title_room_one", "gameRoom/texture/title_room_three", "gameRoom/texture/title_room_five" ]
+roomTitle: [ "gameRoom/texture/title_room_one", "gameRoom/texture/title_room_three", "gameRoom/texture/title_room_five" ],
+gesture: [ "gameRoom/texture/scissor", "gameRoom/texture/rock", "gameRoom/texture/paper" ],
+life: "gameRoom/texture/life"
+},
+animation: {
+vs: "gameRoom/animation/VS"
+},
+prefab: {
+winDialog: "gameRoom/prefab/WinDialog",
+lostDialog: "gameRoom/prefab/LostDialog"
 }
 };
 return e;
@@ -777,6 +1262,45 @@ return e;
 o.default = n;
 cc._RF.pop();
 }, {} ],
+ResultController: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "a5e83Ey02dK6bImINFwrRQ+", "ResultController");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/UI/SpriteManager"), i = e("../../Framework/Resources/ResManager"), a = cc._decorator, r = a.ccclass, c = a.property, s = function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.avatarSprite = null;
+t.gestureSprite = null;
+t.winnerSprite = null;
+t.highlightSprite = null;
+return t;
+}
+t.prototype.onLoad = function() {};
+t.prototype.init = function(e) {
+if (e) {
+var t = i.default.common.texture.userAvatarsVS[e.avatar];
+n.default.loadSprite(this.avatarSprite, t);
+var o = i.default.room.texture.gesture[e.gesture];
+o ? n.default.loadSprite(this.gestureSprite, o) : n.default.setSpriteFrame(this.gestureSprite, null);
+cc.isValid(this.winnerSprite) && (this.winnerSprite.node.active = e.isWinner);
+cc.isValid(this.highlightSprite) && (this.highlightSprite.node.active = e.isWinner);
+}
+};
+__decorate([ c(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
+__decorate([ c(cc.Sprite) ], t.prototype, "gestureSprite", void 0);
+__decorate([ c(cc.Sprite) ], t.prototype, "winnerSprite", void 0);
+__decorate([ c(cc.Sprite) ], t.prototype, "highlightSprite", void 0);
+return t = __decorate([ r ], t);
+}(cc.Component);
+o.default = s;
+cc._RF.pop();
+}, {
+"../../Framework/Resources/ResManager": "ResManager",
+"../../Framework/UI/SpriteManager": "SpriteManager"
+} ],
 SpineManager: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "b110cDWcpxFKLFa8MaWyPOT", "SpineManager");
@@ -790,22 +1314,22 @@ var t = null;
 cc.isValid(e) && (e instanceof sp.Skeleton ? t = e : e instanceof cc.Node && ((t = e.getComponent(sp.Skeleton)) || (t = e.addComponent(sp.Skeleton))));
 return t;
 };
-e.loadSpine = function(e, t, o, n, a) {
-var r = this.getSpine(e);
-cc.isValid(r) && t && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
-if (e) cc.error(e.message || e); else if (cc.isValid(r)) {
-var c = 0, i = "", s = !0;
+e.loadSpine = function(e, t, o, n, i) {
+var a = this.getSpine(e);
+cc.isValid(a) && t && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
+if (e) cc.error(e.message || e); else if (cc.isValid(a)) {
+var r = 0, c = "", s = !0;
 if (o) {
-c = o.trackIndex || 0;
-i = o.name || "";
+r = o.trackIndex || 0;
+c = o.name || "";
 null != o.loop && void 0 != o.loop && (s = o.loop);
 }
-r.skeletonData = t;
-r.setAnimation(c, i, s);
-"function" == typeof a && r.setEventListener(function(e, t) {
-a(e, t);
+a.skeletonData = t;
+a.setAnimation(r, c, s);
+"function" == typeof i && a.setEventListener(function(e, t) {
+i(e, t);
 });
-"function" == typeof n && r.setCompleteListener(function() {
+"function" == typeof n && a.setCompleteListener(function() {
 n();
 });
 }
@@ -813,34 +1337,34 @@ n();
 };
 e.loadSkeleton = function(e, t, o, n) {
 void 0 === n && (n = null);
-var a = this.getSpine(e);
-cc.isValid(a) && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
+var i = this.getSpine(e);
+cc.isValid(i) && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
 if (e) {
 cc.log(e.message || e);
 n && n();
-} else if (cc.isValid(a)) {
-a.skeletonData = t;
+} else if (cc.isValid(i)) {
+i.skeletonData = t;
 o && o();
 }
 });
 };
-e.loadSpineWithSkin = function(e, t, o, n, a) {
-var r = this.getSpine(e);
-cc.isValid(r) && t && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
-if (e) cc.error(e.message || e); else if (cc.isValid(r)) {
-var c = 0, i = "", s = !0, l = "";
+e.loadSpineWithSkin = function(e, t, o, n, i) {
+var a = this.getSpine(e);
+cc.isValid(a) && t && cc.loader.loadRes(t, sp.SkeletonData, function(e, t) {
+if (e) cc.error(e.message || e); else if (cc.isValid(a)) {
+var r = 0, c = "", s = !0, l = "";
 if (o) {
-c = o.trackIndex || 0;
-i = o.name || "";
+r = o.trackIndex || 0;
+c = o.name || "";
 null != o.loop && void 0 != o.loop && (s = o.loop);
 l = o.skin || "";
 }
-r.skeletonData = t;
-"" != l && r.setSkin(l);
-"function" == typeof a && r.setCompleteListener(function() {
-a();
+a.skeletonData = t;
+"" != l && a.setSkin(l);
+"function" == typeof i && a.setCompleteListener(function() {
+i();
 });
-r.findAnimation(i) ? r.setAnimation(c, i, s) : cc.log("[SpineManager] 找不到动画名称: " + i);
+a.findAnimation(c) ? a.setAnimation(r, c, s) : cc.log("[SpineManager] 找不到动画名称: " + c);
 "function" == typeof n && n();
 }
 });
@@ -881,42 +1405,42 @@ this.loadSprite(n, t, o);
 }
 };
 e.loadSprite = function(e, t, o, n) {
-cc.isValid(e) && t && cc.loader.loadRes(t, cc.SpriteFrame, function(t, a) {
+cc.isValid(e) && t && cc.loader.loadRes(t, cc.SpriteFrame, function(t, i) {
 if (t) {
 cc.error(t.message || t);
 "function" == typeof n && n();
 } else if (cc.isValid(e)) {
-e.spriteFrame = a;
+e.spriteFrame = i;
 "function" == typeof o && o();
 }
 });
 };
-e.loadSpriteAtlasForNode = function(e, t, o, n, a) {
+e.loadSpriteAtlasForNode = function(e, t, o, n, i) {
 if (cc.isValid(e)) {
-var r = e.getComponent(cc.Sprite);
-this.loadSpriteAtlas(r, t, o, n, a);
+var a = e.getComponent(cc.Sprite);
+this.loadSpriteAtlas(a, t, o, n, i);
 }
 };
-e.loadSpriteAtlas = function(e, t, o, n, a) {
-var r = this;
+e.loadSpriteAtlas = function(e, t, o, n, i) {
+var a = this;
 if (cc.isValid(e) && t && o) {
-var c = r.atlasCache[t];
+var r = a.atlasCache[t];
+if (r) {
+var c = r.getSpriteFrame(o);
 if (c) {
-var i = c.getSpriteFrame(o);
-if (i) {
-e.spriteFrame = i;
+e.spriteFrame = c;
 "function" == typeof n && n();
-} else "function" == typeof a && a();
-} else cc.loader.loadRes(t, cc.SpriteAtlas, function(c, i) {
-if (!c && i) {
-r.restrictAtlasCache();
-r.atlasCache[t] = i;
-var s = i.getSpriteFrame(o);
+} else "function" == typeof i && i();
+} else cc.loader.loadRes(t, cc.SpriteAtlas, function(r, c) {
+if (!r && c) {
+a.restrictAtlasCache();
+a.atlasCache[t] = c;
+var s = c.getSpriteFrame(o);
 if (s) {
 e.spriteFrame = s;
 "function" == typeof n && n();
-} else "function" == typeof a && a();
-} else "function" == typeof a && a();
+} else "function" == typeof i && i();
+} else "function" == typeof i && i();
 });
 }
 };
@@ -929,32 +1453,22 @@ console.log("SpriteManager ==》 删除缓存图集：" + t + "，剩余：" + O
 }
 });
 };
-e.getSpriteFromCommonAtlas = function(e, t) {
-if (!e || !t) return null;
-var o = /^\/|\/$/g;
-e = e.replace(o, "");
-var n = CommonDepend.CommonAtlasMgr.atlasRes(), a = n && n.commongame ? n.commongame.replace(o, "") : "", r = n && n.cardtype ? n.cardtype.replace(o, "") : "", c = n && n.gameHead ? n.gameHead.replace(o, "") : "", i = null;
-e == a ? i = CommonDepend.CommonAtlasMgr.atlas : e == r ? i = CommonDepend.CommonAtlasMgr.cattleAtlas : e == c && (i = CommonDepend.CommonAtlasMgr.userHeadAtlas);
-var s = null;
-i && (s = i.getSpriteFrame(t));
-return s;
-};
 e.getSprite = function(e, t) {
 cc.loader.loadRes(e, cc.SpriteFrame, function(e, o) {
 e ? cc.error(e.message || e) : o && "function" == typeof t && t(o);
 });
 };
 e.loadRemoteUrl = function(e, t, o, n) {
-var a = null;
-cc.isValid(e) && (e instanceof cc.Sprite ? a = e : e instanceof cc.Node && ((a = e.getComponent(cc.Sprite)) || (a = e.addComponent(cc.Sprite))));
-null != a ? cc.loader.load(t, function(e, t) {
+var i = null;
+cc.isValid(e) && (e instanceof cc.Sprite ? i = e : e instanceof cc.Node && ((i = e.getComponent(cc.Sprite)) || (i = e.addComponent(cc.Sprite))));
+null != i ? cc.loader.load(t, function(e, t) {
 if (e) {
 cc.error(e.message || e);
 "function" == typeof n && n();
-} else if (t && t.url && cc.isValid(a) && cc.isValid(a.node)) {
-var r = new cc.SpriteFrame(t);
-if (r) {
-a.spriteFrame = r;
+} else if (t && t.url && cc.isValid(i) && cc.isValid(i.node)) {
+var a = new cc.SpriteFrame(t);
+if (a) {
+i.spriteFrame = a;
 "function" == typeof o && o();
 } else "function" == typeof n && n();
 } else "function" == typeof n && n();
@@ -972,7 +1486,7 @@ cc._RF.push(t, "b4cf67cDZpLZpwLFmucq9Tw", "Toast");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = cc._decorator, a = n.ccclass, r = n.property, c = function(e) {
+var n = cc._decorator, i = n.ccclass, a = n.property, r = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -997,10 +1511,10 @@ t.prototype.hideToast = function() {
 console.log("hide toast......");
 this.node.active = !1;
 };
-__decorate([ r(cc.Label) ], t.prototype, "message", void 0);
-return t = __decorate([ a ], t);
+__decorate([ a(cc.Label) ], t.prototype, "message", void 0);
+return t = __decorate([ i ], t);
 }(cc.Component);
-o.default = c;
+o.default = r;
 cc._RF.pop();
 }, {} ],
 UserManager: [ function(e, t, o) {
@@ -1009,49 +1523,133 @@ cc._RF.push(t, "e9d0a6ZPV9E35L2SR5nWjRo", "UserManager");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../Resources/ResManager"), a = e("../Utils/LocalStorageMgr"), r = function() {
+var n = e("../Resources/ResManager"), i = e("../Utils/LocalStorageMgr"), a = e("./User"), r = e("./GameManager"), c = function() {
 function e() {}
 e.createRandomUser = function(e) {
-var t = 1e4 + parseInt((1e4 * Math.random()).toString()), o = Math.random() * this.userNames.length, a = this.userNames[parseInt(o.toString())], r = parseInt((Math.random() * n.default.common.texture.userAvatars.length).toString()), c = this.INIT_COIN;
-e && (c = Math.random() * this.INIT_COIN * 10);
-return {
-id: t,
-name: a,
-coin: c,
-avatar: r
-};
+var t = new a.default(), o = 1e4 + parseInt((1e4 * Math.random()).toString()), i = Math.random() * this.userNames.length, c = this.userNames[parseInt(i.toString())], s = parseInt((Math.random() * n.default.common.texture.userAvatars.length).toString()), l = this.INIT_COIN;
+e && (l = Math.random() * this.INIT_COIN * 10);
+t.id = o;
+t.name = c;
+t.coin = l;
+t.avatar = s;
+t.life = 0;
+t.isWinner = !1;
+t.gesture = r.default.GESTURE.NONE;
+t.winCount = 0;
+return t;
 };
 e.initLoginUser = function() {
-this.currentUser = a.default.getLoginUser();
+this.currentUser = i.default.getLoginUser();
 return this.currentUser;
 };
 e.guestLogin = function() {
-this.currentUser = a.default.getLoginUser();
+this.currentUser = i.default.getLoginUser();
 if (!this.currentUser) {
 this.currentUser = this.createRandomUser();
-a.default.saveLoginUser(this.currentUser);
+i.default.saveLoginUser(this.currentUser);
 }
 return this.currentUser;
 };
 e.getLoginUser = function() {
 return this.currentUser;
 };
-e.setLoginUser = function(e) {
-this.currentUser = e;
-};
 e.updateUserCoin = function(e) {
-this.currentUser && (this.currentUser.coin = e);
-a.default.saveLoginUser(this.currentUser);
+if (this.currentUser) {
+this.currentUser.coin = e;
+i.default.saveLoginUser(this.currentUser);
+}
 };
 e.userNames = [ "Sam", "Barney", "Lili", "Kate", "Katherine", "James", "Bob", "Carl" ];
 e.INIT_COIN = 1e3;
 e.currentUser = null;
 return e;
 }();
-o.default = r;
+o.default = c;
 cc._RF.pop();
 }, {
 "../Resources/ResManager": "ResManager",
-"../Utils/LocalStorageMgr": "LocalStorageMgr"
+"../Utils/LocalStorageMgr": "LocalStorageMgr",
+"./GameManager": "GameManager",
+"./User": "User"
+} ],
+User: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "1185bjrNkNHvp4mXmXed2OY", "User");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = function() {
+return function() {};
+}();
+o.default = n;
+cc._RF.pop();
+}, {} ],
+WinDialog: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "c5fceiiDHtAt6awKHf3AGkM", "WinDialog");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../Framework/UI/LabelManager"), i = cc._decorator, a = i.ccclass, r = i.property, c = function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.mask = null;
+t.body = null;
+t.amountLabel = null;
+t.backCallback = null;
+t.continueCallback = null;
+return t;
+}
+t.prototype.showDialog = function(e, t, o) {
+var i = this;
+i.backCallback = t;
+i.continueCallback = o;
+var a = "";
+a = e >= 0 ? "+" + e : "" + e;
+n.default.setLabelString(i.amountLabel, a);
+var r = cc.callFunc(function() {}), c = cc.callFunc(function() {
+if (cc.isValid(i.body)) {
+i.body.active = !0;
+i.body.runAction(cc.sequence(cc.delayTime(.04), cc.fadeIn(.2), cc.delayTime(.1), r));
+}
+});
+if (cc.isValid(i.node)) {
+i.node.setPosition(0, 0);
+i.node.opacity = 0;
+i.node.scale = 0;
+i.mask.width = cc.winSize.width;
+i.mask.height = cc.winSize.height;
+i.node.active = !0;
+i.node.runAction(cc.sequence(cc.spawn(cc.fadeIn(.15), cc.scaleTo(.15, 1.1)), cc.scaleTo(.15, 1), c)).easing(cc.easeSineOut());
+}
+};
+t.prototype.onClickBack = function() {
+this.dismissDialog();
+this.backCallback && this.backCallback();
+};
+t.prototype.onClickContinue = function() {
+this.dismissDialog();
+this.continueCallback && this.continueCallback();
+};
+t.prototype.dismissDialog = function() {
+var e = this;
+cc.isValid(e.node) && e.node.runAction(cc.sequence(cc.scaleTo(.08, 1.1), cc.scaleTo(.1, 0), cc.callFunc(function() {
+if (cc.isValid(e.node)) {
+e.node.active = !1;
+e.body.active = !1;
+}
+e.node.removeFromParent();
+}, e.node))).easing(cc.easeIn(3));
+};
+__decorate([ r(cc.Node) ], t.prototype, "mask", void 0);
+__decorate([ r(cc.Node) ], t.prototype, "body", void 0);
+__decorate([ r(cc.Label) ], t.prototype, "amountLabel", void 0);
+return t = __decorate([ a ], t);
+}(cc.Component);
+o.default = c;
+cc._RF.pop();
+}, {
+"../../Framework/UI/LabelManager": "LabelManager"
 } ]
-}, {}, [ "Toast", "GameRoom", "Hall", "Launcher", "Loading", "CommonEventName", "CommonFunction", "CommonPrefabMgr", "Global", "GameManager", "UserManager", "Language", "ResManager", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "LocalStorageMgr", "NativeUtil" ]);
+}, {}, [ "CountDown", "Toast", "WinDialog", "GameRoom", "GameRoomController", "GestureSelector", "LifeController", "ResultController", "Hall", "Launcher", "Loading", "CommonEventName", "CommonFunction", "CommonPrefabMgr", "Global", "GameManager", "User", "UserManager", "Language", "ResManager", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "CountDownUtil", "LocalStorageMgr", "NativeUtil" ]);

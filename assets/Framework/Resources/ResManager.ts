@@ -48,7 +48,8 @@ class ResManager {
         },
         prefab:{
             winDialog: "gameRoom/prefab/WinDialog",
-            lostDialog: "gameRoom/prefab/LostDialog"
+            lostDialog: "gameRoom/prefab/LostDialog",
+            drawDialog: "gameRoom/prefab/DrawDialog"
         }
     }
 

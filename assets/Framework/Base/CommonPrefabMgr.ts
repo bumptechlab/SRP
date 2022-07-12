@@ -62,6 +62,23 @@ class CommonPrefabMgr {
         });
     }
 
+    static showDrawDialog(winAmount: number, backCallback, continueCallback) {
+        let canvas = CommonFunction.getSceneCanvas();
+        PrefabManager.getPrefab(ResManager.room.prefab.drawDialog, function (prefab) {
+            if (prefab) {
+                let propBox = cc.instantiate(prefab);
+                if (propBox) {
+                    if (cc.isValid(canvas)) {
+                        canvas.addChild(propBox, Global.Config.layerZOrder.Dialog);
+                    }
+                    if (propBox.getComponent(WinDialog)) {
+                        propBox.getComponent(WinDialog).showDialog(winAmount, backCallback, continueCallback);
+                    }
+                }
+            }
+        });
+    }
+
 }
 
 export default CommonPrefabMgr;

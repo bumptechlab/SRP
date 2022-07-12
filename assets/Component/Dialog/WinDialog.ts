@@ -31,15 +31,15 @@ export default class WinDialog extends cc.Component {
         let self = this;
         self.backCallback = backCallback;
         self.continueCallback = continueCallback;
-        let amountText = "";
-        if (amount >= 0) {
-            amountText = "+" + amount;
-        } else {
-            amountText = "" + amount;
-        }
-        LabelManager.setLabelString(self.amountLabel, amountText);
-        let bodyCallback = cc.callFunc(function () {
 
+        let bodyCallback = cc.callFunc(function () {
+            let amountText = "";
+            if (amount >= 0) {
+                amountText = "+" + amount;
+            } else {
+                amountText = "" + amount;
+            }
+            LabelManager.setLabelString(self.amountLabel, amountText);
         });
 
         let popDialogShown = cc.callFunc(function () {
