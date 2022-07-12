@@ -14,7 +14,7 @@ class GameRoomController {
     public curRound: number = 0;
     public isGameOver: boolean = false;
 
-    public initRoom(roomKind: number, me: User, opponent: User){
+    public initRoom(roomKind: number, me: User, opponent: User) {
         this.roomKind = roomKind;
         this.me = me;
         this.opponent = opponent;
@@ -73,6 +73,9 @@ class GameRoomController {
         }
         if (this.isGameOver) {
             console.log("Game Over");
+            if (resultCallback) {
+                resultCallback(this.me, this.opponent, this.isGameOver);
+            }
             return;
         }
         this.curRound++;

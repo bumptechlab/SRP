@@ -1,6 +1,8 @@
 import UserManager from "./UserManager";
 import GameRoomController from "../../Component/GameRoom/GameRoomController";
 import User from "./User";
+import CommonPrefabMgr from "../Base/CommonPrefabMgr";
+import Language from "../Resources/Language";
 
 export default class GameManager {
 
@@ -44,22 +46,39 @@ export default class GameManager {
     }
 
     /**
-     * 初始化一个房间
+     * 初始化并进入房间场景
      * @param roomKind
      */
     public static enterRoom(roomKind: number) {
+        let room = this.createRoom(roomKind);
+        if (room == null) {
+            CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
+            return;
+        }
+        cc.director.loadScene("GameRoom");
+        return room;
+    }
+
+    /**
+     * 初始化一个房间
+     * @param roomKind
+     */
+    public static createRoom(roomKind: number): GameRoomController {
         let me = UserManager.getLoginUser();
+        //余额不足下注，无法创建房间
+        if (me.coin < this.betAmount) {
+            return null;
+        }
         let opponent = this.createOpponent();
 
         let room = new GameRoomController();
         room.initRoom(roomKind, me, opponent);
-        this.setCurRoom(room);
 
-        //进入房间扣金币
+        //进入新房间扣金币
         let myCoin = me.coin - this.betAmount;
         room.updateMyCoin(myCoin);
 
-        cc.director.loadScene("GameRoom");
+        this.setCurRoom(room);
         return room;
     }
 

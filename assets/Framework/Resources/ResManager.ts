@@ -13,6 +13,18 @@ class ResManager {
             userAvatarsVS: [
                 "common/texture/home_img_head2",
                 "common/texture/home_img_head3",
+            ],
+            numbers:[
+                "common/texture/number/0",
+                "common/texture/number/1",
+                "common/texture/number/2",
+                "common/texture/number/3",
+                "common/texture/number/4",
+                "common/texture/number/5",
+                "common/texture/number/6",
+                "common/texture/number/7",
+                "common/texture/number/8",
+                "common/texture/number/9",
             ]
         }
     }

@@ -12,13 +12,14 @@ import SpriteManager from "../../Framework/UI/SpriteManager";
 import ResManager from "../../Framework/Resources/ResManager";
 import GameManager from "../../Framework/Business/GameManager";
 import LifeController from "./LifeController";
-import UserManager from "../../Framework/Business/UserManager";
 import ResultController from "./ResultController";
 import GameRoomController from "./GameRoomController";
 import User from "../../Framework/Business/User";
 import SpineManager from "../../Framework/UI/SpineManager";
 import GestureSelector from "./GestureSelector";
 import CommonPrefabMgr from "../../Framework/Base/CommonPrefabMgr";
+import CountDown from "../Common/CountDown";
+import Language from "../../Framework/Resources/Language";
 
 const {ccclass, property} = cc._decorator;
 
@@ -46,14 +47,25 @@ export default class GameRoom extends cc.Component {
     @property(GestureSelector)
     gestureSelector: GestureSelector = null;
 
+    @property(CountDown)
+    countDown: CountDown = null;
+
     private curRoom: GameRoomController;
 
     protected onLoad(): void {
         this.curRoom = GameManager.getCurRoom();
-        this.startNewGame();
+        this.initRoom();
+        this.playVsAnimation();
     }
 
     private startNewGame() {
+        let newRoom = GameManager.createRoom(this.curRoom.roomKind);
+        if (newRoom == null) {
+            CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
+            this.onBackBtnClick();
+            return;
+        }
+        this.curRoom = newRoom;
         this.initRoom();
         this.playVsAnimation();
     }
@@ -66,14 +78,14 @@ export default class GameRoom extends cc.Component {
 
         this.updateLife(me, opponent);
         this.updateResult(me, opponent);
-        this.setPlayerVisible(false);
+        this.setControlVisible(false);
 
         if (cc.isValid(this.gestureSelector)) {
             this.gestureSelector.init(this.onSelectGesture);
         }
     }
 
-    private setPlayerVisible(visible) {
+    private setControlVisible(visible) {
         if (cc.isValid(this.meLifeController)) {
             this.meLifeController.node.active = visible;
         }
@@ -90,6 +102,9 @@ export default class GameRoom extends cc.Component {
         if (cc.isValid(this.gestureSelector)) {
             this.gestureSelector.node.active = visible;
         }
+        if (cc.isValid(this.countDown)) {
+            this.countDown.node.active = visible;
+        }
     }
 
     private playVsAnimation() {
@@ -99,7 +114,7 @@ export default class GameRoom extends cc.Component {
             loop: false,
         };
         SpineManager.loadSpine(this.vsSkeleton, ResManager.room.animation.vs, options, function () {
-            self.setPlayerVisible(true);
+            self.setControlVisible(true);
         });
     }
 
@@ -139,6 +154,7 @@ export default class GameRoom extends cc.Component {
                 //结算金额
                 if (me.isWinner) {
                     let meWinCoin = 2 * GameManager.betAmount;
+
                     self.curRoom.updateMyCoin(me.coin + meWinCoin);
                     CommonPrefabMgr.showWinDialog(meWinCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
                 } else if (opponent.isWinner) {
@@ -147,6 +163,10 @@ export default class GameRoom extends cc.Component {
                     let opponentWinCoin = 2 * GameManager.betAmount;
                     self.curRoom.updateOpponentCoin(opponent.coin + opponentWinCoin);
                     CommonPrefabMgr.showLostDialog(meLostCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
+                }
+            } else {
+                if (cc.isValid(self.countDown)) {
+                    self.countDown.startCountDown(10);
                 }
             }
             self.updateLife(me, opponent);
@@ -162,14 +182,9 @@ export default class GameRoom extends cc.Component {
 
     private onContinueBtnClick() {
         let self = this;
-        self.curRoom.resetRoom();
         self.startNewGame();
     }
 
-
-    protected onClickBack() {
-        cc.director.loadScene("Hall");
-    }
 
     protected onSelectGesture(gesture: number) {
 
@@ -178,6 +193,10 @@ export default class GameRoom extends cc.Component {
     protected onClickConfirm() {
         let self = this;
         let gesture = self.gestureSelector.getSelectedGesture();
+        if (gesture == GameManager.GESTURE.NONE) {
+            CommonPrefabMgr.createToast("Please choose your gesture");
+            return;
+        }
         self.beginMatch(gesture);
     }
 
