@@ -49,8 +49,8 @@ export default class BaseDialog extends cc.Component {
             self.node.setPosition(0, 0);
             self.node.opacity = 0;
             self.node.scale = 0;
-            self.mask.width = cc.winSize.width;
-            self.mask.height = cc.winSize.height;
+            self.node.width = cc.winSize.width;
+            self.node.height = cc.winSize.height;
             self.node.active = true;
             self.node.runAction(cc.sequence(
                 cc.spawn(
