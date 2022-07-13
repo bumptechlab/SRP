@@ -66,7 +66,7 @@ export default class GameRoom extends cc.Component {
         let newRoom = GameManager.createRoom(this.curRoom.roomKind);
         if (newRoom == null) {
             CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
-            this.onBackBtnClick();
+            this.exitGameRoom();
             return;
         }
         this.curRoom = newRoom;
@@ -170,14 +170,14 @@ export default class GameRoom extends cc.Component {
                     let meWinCoin = 2 * GameManager.betAmount;
 
                     self.curRoom.updateMyCoin(me.coin + meWinCoin);
-                    CommonPrefabMgr.showWinDialog(meWinCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
+                    CommonPrefabMgr.showWinDialog(meWinCoin, self.onDialogBackCallback.bind(self), self.onDialogContinueCallback.bind(self));
 
                 } else if (opponent.isWinner) {
                     let meLostCoin = -GameManager.betAmount;
 
                     let opponentWinCoin = 2 * GameManager.betAmount;
                     self.curRoom.updateOpponentCoin(opponent.coin + opponentWinCoin);
-                    CommonPrefabMgr.showLostDialog(meLostCoin, self.onBackBtnClick.bind(self), self.onContinueBtnClick.bind(self));
+                    CommonPrefabMgr.showLostDialog(meLostCoin, self.onDialogBackCallback.bind(self), self.onDialogContinueCallback.bind(self));
                 }
                 if (cc.isValid(self.countDown)) {
                     self.countDown.stopCountDown();
@@ -225,13 +225,26 @@ export default class GameRoom extends cc.Component {
         }
     }
 
-    private onBackBtnClick() {
+    private exitGameRoom() {
         let self = this;
         self.curRoom.resetRoom();
         cc.director.loadScene("Hall");
     }
 
-    private onContinueBtnClick() {
+    private onClickBackBtn(event) {
+        let self = this;
+        CommonFunction.clickManager(event.target);
+        CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
+        self.exitGameRoom();
+    }
+
+    private onDialogBackCallback() {
+        let self = this;
+        self.exitGameRoom();
+    }
+
+    private onDialogContinueCallback() {
         let self = this;
         self.startNewGame();
     }

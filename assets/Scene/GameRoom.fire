@@ -515,7 +515,9 @@
     "_N$hoverSprite": null,
     "hoverSprite": null,
     "_N$disabledSprite": null,
-    "_N$target": null,
+    "_N$target": {
+      "__id__": 8
+    },
     "_id": "e69tz/4Q9P/5WMfpQSXOxY"
   },
   {
@@ -525,7 +527,7 @@
     },
     "component": "",
     "_componentId": "2bba1H6FkFBErZNu3KKrYYJ",
-    "handler": "onBackBtnClick",
+    "handler": "onClickBackBtn",
     "customEventData": ""
   },
   {

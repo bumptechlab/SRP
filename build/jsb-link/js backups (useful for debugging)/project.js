@@ -90,7 +90,7 @@ cc._RF.push(t, "9448diW62xEl6faEa80+ISO", "CheckinDialog");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("./BaseDialog"), n = e("../../Framework/Base/CommonFunction"), i = e("../../Framework/Base/CommonAudioMgr"), r = e("../../Framework/Resources/ResManager"), c = e("../../Framework/Business/CheckinManager"), s = e("../../Framework/UI/SpriteManager"), l = e("../../Framework/Business/UserManager"), u = e("../../Framework/Base/CommonPrefabMgr"), d = cc.js.formatStr, f = e("../../Framework/Resources/Language"), m = e("../../Framework/UI/LabelManager"), p = cc._decorator, g = p.ccclass, h = p.property, C = function(e) {
+var a = e("./BaseDialog"), n = e("../../Framework/Base/CommonFunction"), i = e("../../Framework/Base/CommonAudioMgr"), r = e("../../Framework/Resources/ResManager"), c = e("../../Framework/Business/CheckinManager"), s = e("../../Framework/UI/SpriteManager"), l = e("../../Framework/Business/UserManager"), u = e("../../Framework/Base/CommonPrefabMgr"), f = cc.js.formatStr, d = e("../../Framework/Resources/Language"), m = e("../../Framework/UI/LabelManager"), p = cc._decorator, g = p.ccclass, h = p.property, C = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -138,7 +138,7 @@ var a = c.default.getCheckinState()[o - 1];
 if (a) {
 var s = a.reward, m = l.default.getLoginUser();
 l.default.updateUserCoin(m.coin + s);
-u.default.createToast(d(f.default.common.checkinTips, s));
+u.default.createToast(f(d.default.common.checkinTips, s));
 }
 this.updateCheckinUI();
 }
@@ -436,7 +436,7 @@ cc._RF.push(t, "6f0dcP9/AFL8J9/1X2O2YAz", "CommonPrefabMgr");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("./CommonFunction"), n = e("../Resources/ResManager"), i = e("../UI/PrefabManager"), r = e("./Global"), c = e("../../Component/Dialog/WinDialog"), s = e("../../Component/Dialog/UserDialog"), l = e("../../Component/Dialog/SettingDialog"), u = e("../../Component/Dialog/RuleDialog"), d = e("../../Component/Dialog/CheckinDialog"), f = function() {
+var a = e("./CommonFunction"), n = e("../Resources/ResManager"), i = e("../UI/PrefabManager"), r = e("./Global"), c = e("../../Component/Dialog/WinDialog"), s = e("../../Component/Dialog/UserDialog"), l = e("../../Component/Dialog/SettingDialog"), u = e("../../Component/Dialog/RuleDialog"), f = e("../../Component/Dialog/CheckinDialog"), d = function() {
 function e() {}
 e.createToast = function(e, t) {
 void 0 === t && (t = r.default.Config.layerZOrder.Toast);
@@ -534,14 +534,14 @@ if (t) {
 var o = cc.instantiate(t);
 if (o) {
 cc.isValid(e) && e.addChild(o, r.default.Config.layerZOrder.Dialog);
-o.getComponent(d.default) && o.getComponent(d.default).showDialog();
+o.getComponent(f.default) && o.getComponent(f.default).showDialog();
 }
 }
 });
 };
 return e;
 }();
-o.default = f;
+o.default = d;
 cc._RF.pop();
 }, {
 "../../Component/Dialog/CheckinDialog": "CheckinDialog",
@@ -887,7 +887,7 @@ cc._RF.push(t, "2bba1H6FkFBErZNu3KKrYYJ", "GameRoom");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Business/GameManager"), r = e("./LifeController"), c = e("./ResultController"), s = e("../../Framework/UI/SpineManager"), l = e("./GestureSelector"), u = e("../../Framework/Base/CommonPrefabMgr"), d = e("../Common/CountDown"), f = e("../../Framework/Resources/Language"), m = e("../../Framework/Base/CommonAudioMgr"), p = e("../../Framework/Base/CommonFunction"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
+var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Business/GameManager"), r = e("./LifeController"), c = e("./ResultController"), s = e("../../Framework/UI/SpineManager"), l = e("./GestureSelector"), u = e("../../Framework/Base/CommonPrefabMgr"), f = e("../Common/CountDown"), d = e("../../Framework/Resources/Language"), m = e("../../Framework/Base/CommonAudioMgr"), p = e("../../Framework/Base/CommonFunction"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -915,8 +915,8 @@ this.curRoom = e;
 this.initRoom();
 this.playVsAnimation();
 } else {
-u.default.createToast(f.default.common.notEnoughMoney);
-this.onBackBtnClick();
+u.default.createToast(d.default.common.notEnoughMoney);
+this.exitGameRoom();
 }
 };
 t.prototype.initRoom = function() {
@@ -965,11 +965,11 @@ if (a) {
 if (e.isWinner) {
 var n = 2 * i.default.betAmount;
 t.curRoom.updateMyCoin(e.coin + n);
-u.default.showWinDialog(n, t.onBackBtnClick.bind(t), t.onContinueBtnClick.bind(t));
+u.default.showWinDialog(n, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
 } else if (o.isWinner) {
 var r = -i.default.betAmount, c = 2 * i.default.betAmount;
 t.curRoom.updateOpponentCoin(o.coin + c);
-u.default.showLostDialog(r, t.onBackBtnClick.bind(t), t.onContinueBtnClick.bind(t));
+u.default.showLostDialog(r, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
 }
 cc.isValid(t.countDown) && t.countDown.stopCountDown();
 } else cc.isValid(t.countDown) && t.countDown.startCountDown(t.COUNT_DOWN_TIME);
@@ -992,11 +992,19 @@ t == i.default.GESTURE.NONE && (t = parseInt((3 * Math.random()).toString()));
 this.beginMatch(t);
 }
 };
-t.prototype.onBackBtnClick = function() {
+t.prototype.exitGameRoom = function() {
 this.curRoom.resetRoom();
 cc.director.loadScene("Hall");
 };
-t.prototype.onContinueBtnClick = function() {
+t.prototype.onClickBackBtn = function(e) {
+p.default.clickManager(e.target);
+m.default.playEffect(n.default.common.audio.btnClick);
+this.exitGameRoom();
+};
+t.prototype.onDialogBackCallback = function() {
+this.exitGameRoom();
+};
+t.prototype.onDialogContinueCallback = function() {
 this.startNewGame();
 };
 t.prototype.onSelectGesture = function(e) {};
@@ -1004,7 +1012,7 @@ t.prototype.onClickConfirm = function(e) {
 p.default.clickManager(e.target);
 m.default.playEffect(n.default.common.audio.btnClick);
 var t = this.gestureSelector.getSelectedGesture();
-t != i.default.GESTURE.NONE ? this.beginMatch(t) : u.default.createToast(f.default.common.notSelectGesture);
+t != i.default.GESTURE.NONE ? this.beginMatch(t) : u.default.createToast(d.default.common.notSelectGesture);
 };
 t.prototype.onDestroy = function() {
 cc.isValid(this.countDown) && this.countDown.stopCountDown();
@@ -1016,7 +1024,7 @@ __decorate([ C(c.default) ], t.prototype, "meResultController", void 0);
 __decorate([ C(c.default) ], t.prototype, "opponentResultController", void 0);
 __decorate([ C(sp.Skeleton) ], t.prototype, "vsSkeleton", void 0);
 __decorate([ C(l.default) ], t.prototype, "gestureSelector", void 0);
-__decorate([ C(d.default) ], t.prototype, "countDown", void 0);
+__decorate([ C(f.default) ], t.prototype, "countDown", void 0);
 return t = __decorate([ h ], t);
 }(cc.Component);
 o.default = _;
@@ -1132,7 +1140,7 @@ cc._RF.push(t, "c5e60FAkL5JKZtwdy83I9mx", "Hall");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/Business/UserManager"), n = e("../../Framework/UI/LabelManager"), i = e("../../Framework/Business/GameManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = e("../../Framework/Utils/NativeUtil"), d = cc.js.formatStr, f = e("../../Framework/Base/CommonAudioMgr"), m = e("../../Framework/Base/CommonFunction"), p = e("../../Framework/Base/CommonEventName"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
+var a = e("../../Framework/Business/UserManager"), n = e("../../Framework/UI/LabelManager"), i = e("../../Framework/Business/GameManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = e("../../Framework/Utils/NativeUtil"), f = cc.js.formatStr, d = e("../../Framework/Base/CommonAudioMgr"), m = e("../../Framework/Base/CommonFunction"), p = e("../../Framework/Base/CommonEventName"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -1152,7 +1160,7 @@ return t;
 }
 t.prototype.onLoad = function() {
 console.log("=== Hall onLoad ===");
-f.default.playMusic(s.default.common.audio.bgm, !0, 1);
+d.default.playMusic(s.default.common.audio.bgm, !0, 1);
 this.initUserInfo();
 };
 t.prototype.onEnable = function() {
@@ -1172,37 +1180,37 @@ n.default.setLabelString(this.coinLabel, e.coin);
 };
 t.prototype.onClickCheckin = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 r.default.showCheckinDialog();
 };
 t.prototype.onClickGuide = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 r.default.showRuleDialog();
 };
 t.prototype.onClickSetting = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 r.default.showSettingDialog();
 };
 t.prototype.onClickRoomOne = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 a.default.getLoginUser().coin < i.default.roomInfo.roomOne.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, i.default.ROOM_KIND.ONE);
 };
 t.prototype.onClickRoomThree = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 a.default.getLoginUser().coin < i.default.roomInfo.roomThree.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, i.default.ROOM_KIND.THREE);
 };
 t.prototype.onClickRoomFive = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 a.default.getLoginUser().coin < i.default.roomInfo.roomFive.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, i.default.ROOM_KIND.FIVE);
 };
 t.prototype.onClickBeginMatch = function(e) {
 m.default.clickManager(e.target);
-f.default.playEffect(s.default.common.audio.btnClick);
+d.default.playEffect(s.default.common.audio.btnClick);
 i.default.enterRoom(this.currentRoomKind);
 };
 t.prototype.setCurShowState = function(e, t) {
@@ -1217,7 +1225,7 @@ this.matchLayout.active = !0;
 var o = a.default.getLoginUser();
 c.default.loadSprite(this.roomTitleSprite, s.default.room.texture.roomTitle[t]);
 c.default.loadSprite(this.meMatchAvatarSprite, s.default.common.texture.userAvatars[o.avatar]);
-n.default.setLabelString(this.betTipsLabel, d(l.default.common.betAmountTips, i.default.betAmount));
+n.default.setLabelString(this.betTipsLabel, f(l.default.common.betAmountTips, i.default.betAmount));
 this.currentRoomKind = t;
 }
 };
@@ -1433,7 +1441,7 @@ cc._RF.push(t, "35c08m9ktRI3qnxKf4ysetX", "LifeController");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/UI/LabelManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/Base/CommonFunction"), s = e("../../Framework/Base/CommonAudioMgr"), l = cc._decorator, u = l.ccclass, d = l.property, f = function(e) {
+var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/UI/LabelManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/Base/CommonFunction"), s = e("../../Framework/Base/CommonAudioMgr"), l = cc._decorator, u = l.ccclass, f = l.property, d = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -1467,12 +1475,12 @@ c.default.clickManager(e.target);
 s.default.playEffect(n.default.common.audio.btnClick);
 r.default.showUserDialog(this.user);
 };
-__decorate([ d(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
-__decorate([ d(cc.Label) ], t.prototype, "nameLabel", void 0);
-__decorate([ d(cc.Node) ], t.prototype, "lifeCount", void 0);
+__decorate([ f(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
+__decorate([ f(cc.Label) ], t.prototype, "nameLabel", void 0);
+__decorate([ f(cc.Node) ], t.prototype, "lifeCount", void 0);
 return t = __decorate([ u ], t);
 }(cc.Component);
-o.default = f;
+o.default = d;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonAudioMgr": "CommonAudioMgr",
@@ -1488,7 +1496,7 @@ cc._RF.push(t, "b7e4780HsVNypzwv6PTvZdF", "Loading");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/Utils/NativeUtil"), n = e("../../Framework/Business/UserManager"), i = e("../../Framework/Base/CommonEventName"), r = e("../../Framework/Base/CommonFunction"), c = e("../../Framework/Base/CommonAudioMgr"), s = e("../../Framework/Resources/ResManager"), l = cc._decorator, u = l.ccclass, d = (l.property, 
+var a = e("../../Framework/Utils/NativeUtil"), n = e("../../Framework/Business/UserManager"), i = e("../../Framework/Base/CommonEventName"), r = e("../../Framework/Base/CommonFunction"), c = e("../../Framework/Base/CommonAudioMgr"), s = e("../../Framework/Resources/ResManager"), l = cc._decorator, u = l.ccclass, f = (l.property, 
 function(e) {
 __extends(t, e);
 function t() {
@@ -1519,7 +1527,7 @@ a.default.appleLogin();
 t.prototype.onAppLoginResult = function(e, t) {};
 return t = __decorate([ u ], t);
 }(cc.Component));
-o.default = d;
+o.default = f;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonAudioMgr": "CommonAudioMgr",
@@ -1720,10 +1728,10 @@ n = t.font[a].nodePath, i = t.font[a].resPath;
 var l = t.font[a].spacingX, u = null;
 u = "" == n || "/" == n ? e : cc.find(n, e);
 if (cc.isValid(u) && i) {
-var d = this.getAssetByPath(i, "font");
-if (d) {
+var f = this.getAssetByPath(i, "font");
+if (f) {
 console.log("NodeManager ==》子节点[%s]，从内存中加载字体：%s", n, i);
-UIDepend.LabelManager.setFont(u, d, l);
+UIDepend.LabelManager.setFont(u, f, l);
 } else {
 console.log("NodeManager ==》子节点[%s]，内存中找不到字体，动态加载：%s", n, i);
 UIDepend.LabelManager.loadFont(u, i, l);
@@ -1867,7 +1875,7 @@ cc._RF.push(t, "a5e83Ey02dK6bImINFwrRQ+", "ResultController");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Base/CommonPrefabMgr"), r = e("../../Framework/Base/CommonFunction"), c = e("../../Framework/Base/CommonAudioMgr"), s = cc._decorator, l = s.ccclass, u = s.property, d = function(e) {
+var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Base/CommonPrefabMgr"), r = e("../../Framework/Base/CommonFunction"), c = e("../../Framework/Base/CommonAudioMgr"), s = cc._decorator, l = s.ccclass, u = s.property, f = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -1900,7 +1908,7 @@ __decorate([ u(cc.Sprite) ], t.prototype, "winnerSprite", void 0);
 __decorate([ u(cc.Sprite) ], t.prototype, "highlightSprite", void 0);
 return t = __decorate([ l ], t);
 }(cc.Component);
-o.default = d;
+o.default = f;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonAudioMgr": "CommonAudioMgr",
@@ -1933,7 +1941,7 @@ cc._RF.push(t, "0a94fsQ6XxAuKytp5t84673", "SettingDialog");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("./BaseDialog"), n = e("../../Framework/Utils/LocalStorageMgr"), i = e("../../Framework/UI/SpriteManager"), r = e("../../Framework/Resources/ResManager"), c = e("../../Framework/Base/CommonFunction"), s = e("../../Framework/Base/CommonAudioMgr"), l = cc._decorator, u = l.ccclass, d = l.property, f = function(e) {
+var a = e("./BaseDialog"), n = e("../../Framework/Utils/LocalStorageMgr"), i = e("../../Framework/UI/SpriteManager"), r = e("../../Framework/Resources/ResManager"), c = e("../../Framework/Base/CommonFunction"), s = e("../../Framework/Base/CommonAudioMgr"), l = cc._decorator, u = l.ccclass, f = l.property, d = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -1965,11 +1973,11 @@ t = "false" == t ? "true" : "false";
 n.default.saveEffectSwitch(t);
 this.initSwitch();
 };
-__decorate([ d(cc.Sprite) ], t.prototype, "musicSwitch", void 0);
-__decorate([ d(cc.Sprite) ], t.prototype, "effectSwitch", void 0);
+__decorate([ f(cc.Sprite) ], t.prototype, "musicSwitch", void 0);
+__decorate([ f(cc.Sprite) ], t.prototype, "effectSwitch", void 0);
 return t = __decorate([ u ], t);
 }(a.default);
-o.default = f;
+o.default = d;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonAudioMgr": "CommonAudioMgr",
@@ -2311,7 +2319,7 @@ cc._RF.push(t, "c5fceiiDHtAt6awKHf3AGkM", "WinDialog");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/UI/LabelManager"), n = e("./BaseDialog"), i = e("../../Framework/Base/CommonFunction"), r = e("../../Framework/Base/CommonAudioMgr"), c = e("../../Framework/Resources/ResManager"), s = cc._decorator, l = s.ccclass, u = s.property, d = function(e) {
+var a = e("../../Framework/UI/LabelManager"), n = e("./BaseDialog"), i = e("../../Framework/Base/CommonFunction"), r = e("../../Framework/Base/CommonAudioMgr"), c = e("../../Framework/Resources/ResManager"), s = cc._decorator, l = s.ccclass, u = s.property, f = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -2343,7 +2351,7 @@ this.continueCallback && this.continueCallback();
 __decorate([ u(cc.Label) ], t.prototype, "amountLabel", void 0);
 return t = __decorate([ l ], t);
 }(n.default);
-o.default = d;
+o.default = f;
 cc._RF.pop();
 }, {
 "../../Framework/Base/CommonAudioMgr": "CommonAudioMgr",
