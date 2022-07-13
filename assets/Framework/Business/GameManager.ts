@@ -23,13 +23,13 @@ export default class GameManager {
 
     public static roomInfo = {
         roomOne: {
-            limit: 10,
+            limit: 100,
         },
         roomThree: {
-            limit: 50,
+            limit: 500,
         },
         roomFive: {
-            limit: 100,
+            limit: 1000,
         }
     };
     public static betAmount = 10;//每一局下注金额
@@ -56,7 +56,6 @@ export default class GameManager {
             return;
         }
         cc.director.loadScene("GameRoom");
-        return room;
     }
 
     /**

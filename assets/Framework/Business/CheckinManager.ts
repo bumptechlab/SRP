@@ -62,7 +62,7 @@ export default class CheckinManager {
             for (let i = 0; i < days; i++) {
                 let reward = this.DAY_REWARDS[i];
                 if (!reward) {
-                    reward = 700;
+                    reward = 100;
                 }
                 checkinState[i] = {
                     checked: false, //是否已经签到过
