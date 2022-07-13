@@ -11,6 +11,7 @@ class ResManager {
             userDialog: "common/prefab/UserDialog",
             settingDialog: "common/prefab/SettingDialog",
             ruleDialog: "common/prefab/RuleDialog",
+            checkinDialog: "common/prefab/CheckinDialog",
         },
         texture: {
             userAvatars: [
@@ -35,6 +36,10 @@ class ResManager {
             ],
             off: "common/texture/icon_off",
             on: "common/texture/icon_on",
+            checkin:{
+                bgCheckable: "common/texture/checkin/bg_checkable",
+                bgNotSelect: "common/texture/checkin/bg_not_selected"
+            }
         }
     };
 

@@ -2,6 +2,7 @@ import ResManager from "../Resources/ResManager";
 import LocalStorageMgr from "../Utils/LocalStorageMgr";
 import User from "./User";
 import GameManager from "./GameManager";
+import CommonEventName from "../Base/CommonEventName";
 
 class UserManager {
 
@@ -53,6 +54,7 @@ class UserManager {
         if (this.currentUser) {
             this.currentUser.coin = coin;
             LocalStorageMgr.saveLoginUser(this.currentUser);
+            cc.director.emit(CommonEventName.EVENT_REFRESH_USER_INFO);
         }
     }
 

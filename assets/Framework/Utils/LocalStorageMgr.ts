@@ -57,6 +57,51 @@ class LocalStorageMgr {
         this.saveData("_login_user", userJson);
     }
 
+    public static getCheckinState() {
+        let stateJson = this.readData("_checkin_state");
+        let stateList = null;
+        if (stateJson) {
+            stateList = JSON.parse(stateJson);
+        }
+        return stateList;
+    }
+
+    public static saveCheckinState(checkinState) {
+        let stateJson = "";
+        if (checkinState) {
+            stateJson = JSON.stringify(checkinState);
+        }
+        this.saveData("_checkin_state", stateJson);
+    }
+
+    //签到的日期
+    public static getLastCheckinDate(): number {
+        let timeText = this.readData("_last_checkin_date");
+        let timeValue = 0;
+        if (timeText) {
+            timeValue = parseInt(timeText);
+        }
+        return timeValue;
+    }
+
+    public static saveLastCheckinDate(dateTime: number) {
+        this.saveData("_last_checkin_date", dateTime);
+    }
+
+    //签到的第几天
+    public static getLastCheckinDay(): number {
+        let dayText = this.readData("_last_checkin_day");
+        let checkinDay = 0;
+        if (dayText) {
+            checkinDay = parseInt(dayText);
+        }
+        return checkinDay;
+    }
+
+    public static saveLastCheckinDay(checkinDay: number) {
+        this.saveData("_last_checkin_day", checkinDay);
+    }
+
     /**
      * 音效
      */

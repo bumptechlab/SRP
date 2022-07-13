@@ -20,6 +20,7 @@ import NativeUtil from "../../Framework/Utils/NativeUtil";
 import formatStr = cc.js.formatStr;
 import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
 import CommonFunction from "../../Framework/Base/CommonFunction";
+import CommonEventName from "../../Framework/Base/CommonEventName";
 
 const {ccclass, property} = cc._decorator;
 
@@ -69,11 +70,13 @@ export default class Hall extends cc.Component {
     protected onEnable(): void {
         let self = this;
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, this);
+        cc.director.on(CommonEventName.EVENT_REFRESH_USER_INFO, self.initUserInfo, self);
     }
 
     protected onDisable(): void {
         let self = this;
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, self.onKeyUp, self);
+        cc.director.off(CommonEventName.EVENT_REFRESH_USER_INFO, self.initUserInfo, self);
     }
 
     private initUserInfo(): void {
@@ -89,6 +92,8 @@ export default class Hall extends cc.Component {
     protected onClickCheckin(event): void {
         CommonFunction.clickManager(event.target);
         CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
+
+        CommonPrefabMgr.showCheckinDialog();
     }
 
     protected onClickGuide(event): void {
