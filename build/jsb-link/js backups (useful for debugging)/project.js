@@ -215,7 +215,7 @@ a.default.saveCheckinState(t);
 }
 return t;
 };
-e.DAY_REWARDS = [ 100, 100, 100, 100, 100, 100, 100 ];
+e.DAY_REWARDS = [ 100, 200, 300, 400, 500, 600, 700 ];
 return e;
 }();
 o.default = i;
