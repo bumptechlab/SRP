@@ -13,6 +13,17 @@ class GameRoomController {
     public winRound: number = 0; //首先到达赢的轮数，三局两胜（winRound=2）,五局三胜(winRound=3)
     public curRound: number = 0;
     public isGameOver: boolean = false;
+    public gameState = 0;
+
+    //出拳
+    public static GAME_STATE = cc.Enum({
+        IDLE: 0,
+        ROUND_BEGIN: 1,     //新一轮开始，双方决定出什么拳
+        ROUND_END: 2,       //新一轮结束，展示输赢
+        ROUND_WAITING: 3,   //等待下一轮，10秒钟
+        GAME_OVER: 4,      //所有局都已结束
+    });
+
 
     public initRoom(roomKind: number, me: User, opponent: User) {
         this.roomKind = roomKind;
@@ -50,6 +61,7 @@ class GameRoomController {
         this.winRound = winRound;
         this.curRound = 0;
         this.isGameOver = false;
+        this.gameState = GameRoomController.GAME_STATE.IDLE;
     }
 
     public updateOpponentCoin(coin: number) {
@@ -73,6 +85,7 @@ class GameRoomController {
         }
         if (this.isGameOver) {
             console.log("Game Over");
+            this.gameState = GameRoomController.GAME_STATE.GAME_OVER;
             if (resultCallback) {
                 resultCallback(this.me, this.opponent, this.isGameOver);
             }
@@ -94,11 +107,16 @@ class GameRoomController {
             this.me.isWinner = true;
             this.opponent.isWinner = false;
             this.isGameOver = true;
+            this.gameState = GameRoomController.GAME_STATE.GAME_OVER;
         } else if (this.opponent.winCount >= this.winRound) {
             this.me.isWinner = false;
             this.opponent.isWinner = true;
             this.isGameOver = true;
+            this.gameState = GameRoomController.GAME_STATE.GAME_OVER;
+        } else {
+            this.gameState = GameRoomController.GAME_STATE.ROUND_END;
         }
+
         if (resultCallback) {
             resultCallback(this.me, this.opponent, this.isGameOver);
         }

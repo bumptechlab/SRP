@@ -53,7 +53,8 @@ export default class GameRoom extends cc.Component {
     countDown: CountDown = null;
 
     private curRoom: GameRoomController;
-    private COUNT_DOWN_TIME = 10;
+    private BET_COUNT_DOWN_TIME = 10;
+    private RESULT_SHOW_TIME = 2;
 
     protected onLoad(): void {
         CommonAudioMgr.playMusic(ResManager.common.audio.bgm, true, 1);
@@ -124,7 +125,7 @@ export default class GameRoom extends cc.Component {
         SpineManager.loadSpine(this.vsSkeleton, ResManager.room.animation.vs, options, function () {
             self.setControlVisible(true);
             if (cc.isValid(self.countDown)) {
-                self.countDown.startCountDown(self.COUNT_DOWN_TIME);
+                self.countDown.startCountDown(self.BET_COUNT_DOWN_TIME);
             }
         });
     }
@@ -164,6 +165,27 @@ export default class GameRoom extends cc.Component {
             self.countDown.stopCountDown();
         }
         self.curRoom.beginMatch(gesture, function (me: User, opponent: User, isGameOver: boolean) {
+            //判断是否平局
+            let isDraw = false;
+            let winner = "";
+            if (!me.isWinner && !opponent.isWinner) {
+                isDraw = true;
+                winner = "Nobody";
+            } else if (me.isWinner) {
+                winner = me.name;
+            } else if (opponent.isWinner) {
+                winner = opponent.name;
+            }
+            console.log("Round-%s, winner is %s, isGameOver=%s", self.curRoom.curRound, winner, self.curRoom.isGameOver);
+
+            //更新UI
+            self.updateLife(me, opponent);
+            self.updateResult(me, opponent, isDraw);
+            //清空出拳
+            if (cc.isValid(self.gestureSelector)) {
+                self.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
+            }
+
             if (isGameOver) {
                 //结算金额
                 if (me.isWinner) {
@@ -183,36 +205,34 @@ export default class GameRoom extends cc.Component {
                     self.countDown.stopCountDown();
                 }
             } else {
-                if (cc.isValid(self.countDown)) {
-                    self.countDown.startCountDown(self.COUNT_DOWN_TIME);
-                }
-            }
-            //判断是否平局
-            let isDraw = false;
-            let winner = "";
-            if (!me.isWinner && !opponent.isWinner) {
-                isDraw = true;
-                winner = "Nobody";
-            } else if (me.isWinner) {
-                winner = me.name;
-            } else if (opponent.isWinner) {
-                winner = opponent.name;
-            }
-            console.log("Round-%s, winner is %s, isGameOver=%s", self.curRoom.curRound, winner, self.curRoom.isGameOver);
+                let timer = setTimeout(function () {
+                    clearTimeout(timer);
+                    if (!cc.isValid(self.node)) {
+                        return;
+                    }
+                    self.curRoom.gameState = GameRoomController.GAME_STATE.ROUND_WAITING;
 
-            //更新UI
-            self.updateLife(me, opponent);
-            self.updateResult(me, opponent, isDraw);
-            if (cc.isValid(self.gestureSelector)) {
-                self.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
+                    self.curRoom.me.gesture = GameManager.GESTURE.NONE;
+                    self.curRoom.me.isWinner = false;
+                    self.curRoom.opponent.gesture = GameManager.GESTURE.NONE;
+                    self.curRoom.opponent.isWinner = false;
+
+                    self.updateResult(self.curRoom.me, self.curRoom.opponent, false);
+
+                    if (cc.isValid(self.countDown)) {
+                        self.countDown.startCountDown(self.BET_COUNT_DOWN_TIME);
+                    }
+                }, self.RESULT_SHOW_TIME * 1000);
+
             }
-        })
+
+        });
     }
 
     private countdownCallback(leftTs) {
         let self = this;
         console.log("Round-%s countdown: %s, isGameOver=%s", self.curRoom.curRound, leftTs, self.curRoom.isGameOver);
-        if (self.curRoom.isGameOver) {
+        if (self.curRoom.gameState != GameRoomController.GAME_STATE.ROUND_WAITING) {
             return;
         }
         //倒计时结束，未选择时随机出拳
@@ -264,7 +284,11 @@ export default class GameRoom extends cc.Component {
             CommonPrefabMgr.createToast(Language.common.notSelectGesture);
             return;
         }
-        self.beginMatch(gesture);
+        if (self.curRoom.gameState == GameRoomController.GAME_STATE.IDLE || self.curRoom.gameState == GameRoomController.GAME_STATE.ROUND_WAITING) {
+            self.beginMatch(gesture);
+        } else {
+            console.log("Can not begin match, current state: " + self.curRoom.gameState);
+        }
     }
 
     protected onDestroy(): void {
