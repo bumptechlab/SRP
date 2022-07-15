@@ -49,12 +49,7 @@ export default class GameManager {
      * 初始化并进入房间场景
      * @param roomKind
      */
-    public static enterRoom(roomKind: number) {
-        let room = this.createRoom(roomKind);
-        if (room == null) {
-            CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
-            return;
-        }
+    public static enterRoom() {
         cc.director.loadScene("GameRoom");
     }
 

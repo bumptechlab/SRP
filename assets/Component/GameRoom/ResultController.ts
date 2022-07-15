@@ -79,9 +79,9 @@ export default class ResultController extends cc.Component {
         let lastRandomIndex = -1;
         let changeGesture = cc.callFunc(function () {
             let curRandomIndex = -1;
-            do{
+            do {
                 curRandomIndex = parseInt((Math.random() * 3).toString());
-            }while (curRandomIndex == lastRandomIndex);
+            } while (curRandomIndex == lastRandomIndex);
             lastRandomIndex = curRandomIndex;
             SpriteManager.setSpriteFrame(self.gestureSprite, self.gestures[curRandomIndex]);
         });

@@ -21,6 +21,7 @@ import formatStr = cc.js.formatStr;
 import CommonAudioMgr from "../../Framework/Base/CommonAudioMgr";
 import CommonFunction from "../../Framework/Base/CommonFunction";
 import CommonEventName from "../../Framework/Base/CommonEventName";
+import RandomAvatar from "../Common/RandomAvatar";
 
 const {ccclass, property} = cc._decorator;
 
@@ -59,6 +60,9 @@ export default class Hall extends cc.Component {
 
     @property(cc.Label)
     betTipsLabel: cc.Label = null;
+
+    @property(RandomAvatar)
+    randomAvatar: RandomAvatar = null;
 
     protected onLoad() {
         let self = this;
@@ -147,12 +151,38 @@ export default class Hall extends cc.Component {
     }
 
     private currentRoomKind;
+    private isRandomAvatarRunning =false;
 
     protected onClickBeginMatch(event): void {
+        let self = this;
         CommonFunction.clickManager(event.target);
         CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
 
-        GameManager.enterRoom(this.currentRoomKind);
+        if (!cc.isValid(self.randomAvatar) || self.isRandomAvatarRunning) {
+            return;
+        }
+
+        let room = GameManager.createRoom(self.currentRoomKind);
+        if (room == null) {
+            CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
+            return;
+        }
+
+        self.isRandomAvatarRunning = true;
+        self.randomAvatar.startRandomAnimation(function () {
+            let avatarPath = ResManager.common.texture.userAvatarsVS[room.opponent.avatar];
+            SpriteManager.loadSpriteForNode(self.randomAvatar.node, avatarPath);
+
+            let timeout = setTimeout(function () {
+                clearTimeout(timeout);
+                if (!cc.isValid(self.node)) {
+                    return;
+                }
+                self.isRandomAvatarRunning = false;
+                GameManager.enterRoom();
+            }, 1000);
+        })
+
     }
 
     public setCurShowState(state: number, roomKind?: number) {
