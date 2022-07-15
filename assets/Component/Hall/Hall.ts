@@ -151,7 +151,7 @@ export default class Hall extends cc.Component {
     }
 
     private currentRoomKind;
-    private isRandomAvatarRunning =false;
+    private isRandomAvatarRunning = false;
 
     protected onClickBeginMatch(event): void {
         let self = this;
@@ -169,9 +169,9 @@ export default class Hall extends cc.Component {
         }
 
         self.isRandomAvatarRunning = true;
-        self.randomAvatar.startRandomAnimation(function () {
-            let avatarPath = ResManager.common.texture.userAvatarsVS[room.opponent.avatar];
-            SpriteManager.loadSpriteForNode(self.randomAvatar.node, avatarPath);
+        self.randomAvatar.startRandomAnimation(room.opponent.avatar, function () {
+            // let avatarPath = ResManager.common.texture.userAvatarsVS[room.opponent.avatar];
+            // SpriteManager.loadSpriteForNode(self.randomAvatar.node, avatarPath);
 
             let timeout = setTimeout(function () {
                 clearTimeout(timeout);

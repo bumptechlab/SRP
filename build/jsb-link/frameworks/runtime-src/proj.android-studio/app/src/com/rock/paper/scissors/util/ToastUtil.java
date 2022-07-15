@@ -5,14 +5,9 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 
-/**
- * Created by lifei on 2017/6/5.
- */
-
 public class ToastUtil {
 
     /**
-     *
      * 在Android源码中的NotificationManagerService.java这个类中定义了两个静态变量
      * 分别对应Toast.LENGTH_LONG（3.5秒）和Toast.LENGTH_SHORT（2秒）的值
      */
@@ -31,7 +26,7 @@ public class ToastUtil {
      * @param args
      */
     public static void showToast(Context context, String format, Object... args) {
-        if(TextUtils.isEmpty(format)){
+        if (TextUtils.isEmpty(format)) {
             return;
         }
         String message = String.format(format, args);

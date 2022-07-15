@@ -53,8 +53,9 @@ export default class GameRoom extends cc.Component {
     countDown: CountDown = null;
 
     private curRoom: GameRoomController;
-    private BET_COUNT_DOWN_TIME = 10;
-    private RESULT_SHOW_TIME = 2;
+    private BET_COUNT_DOWN_TIME = 10;     //等待下一局开始的时长
+    private RESULT_SHOW_TIME = 2;         //展示输赢结果的时长
+    private RANDOM_GESTURE_SHOW_TIME = 3; //展示随机出拳效果的时长
 
     protected onLoad(): void {
         let self = this;
@@ -322,7 +323,7 @@ export default class GameRoom extends cc.Component {
                 console.log("Round-%s, stop random gesture", self.curRoom.curRound);
                 self.beginMatch(gesture);
 
-            }, 3 * 1000);
+            }, self.RANDOM_GESTURE_SHOW_TIME * 1000);
         }
 
         //清空出拳

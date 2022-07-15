@@ -701,7 +701,7 @@ cc._RF.push(t, "4f2a86rJIhCIoZ9hUBSfFat", "GameManager");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("./UserManager"), n = e("../../Component/GameRoom/GameRoomController"), i = e("../Base/CommonPrefabMgr"), r = e("../Resources/Language"), c = function() {
+var a = e("./UserManager"), n = e("../../Component/GameRoom/GameRoomController"), i = function() {
 function e() {}
 e.createOpponent = function() {
 var e = a.default.getLoginUser(), t = a.default.createRandomUser(!0);
@@ -710,8 +710,8 @@ t = a.default.createRandomUser(!0);
 } while (e.id == t.id || e.avatar == t.avatar || e.name == t.name);
 return t;
 };
-e.enterRoom = function(e) {
-null != this.createRoom(e) ? cc.director.loadScene("GameRoom") : i.default.createToast(r.default.common.notEnoughMoney);
+e.enterRoom = function() {
+cc.director.loadScene("GameRoom");
 };
 e.createRoom = function(e) {
 var t = a.default.getLoginUser();
@@ -754,12 +754,10 @@ limit: 1e3
 e.betAmount = 10;
 return e;
 }();
-o.default = c;
+o.default = i;
 cc._RF.pop();
 }, {
 "../../Component/GameRoom/GameRoomController": "GameRoomController",
-"../Base/CommonPrefabMgr": "CommonPrefabMgr",
-"../Resources/Language": "Language",
 "./UserManager": "UserManager"
 } ],
 GameRoomController: [ function(e, t, o) {
@@ -776,6 +774,7 @@ this.roomKind = 0;
 this.winRound = 0;
 this.curRound = 0;
 this.isGameOver = !1;
+this.gameState = 0;
 }
 e.prototype.initRoom = function(e, t, o) {
 this.roomKind = e;
@@ -784,30 +783,31 @@ this.opponent = o;
 this.resetRoom();
 };
 e.prototype.resetRoom = function() {
-var e = 0, t = 0;
+var t = 0, o = 0;
 if (this.roomKind == n.default.ROOM_KIND.ONE) {
-e = 1;
 t = 1;
+o = 1;
 } else if (this.roomKind == n.default.ROOM_KIND.THREE) {
-e = 3;
-t = 2;
-} else if (this.roomKind == n.default.ROOM_KIND.FIVE) {
-e = 5;
 t = 3;
+o = 2;
+} else if (this.roomKind == n.default.ROOM_KIND.FIVE) {
+t = 5;
+o = 3;
 }
-var o = this.me;
-o.life = e;
-o.isWinner = !1;
-o.gesture = n.default.GESTURE.NONE;
-o.winCount = 0;
-var a = this.opponent;
-a.life = e;
+var a = this.me;
+a.life = t;
 a.isWinner = !1;
 a.gesture = n.default.GESTURE.NONE;
 a.winCount = 0;
-this.winRound = t;
+var i = this.opponent;
+i.life = t;
+i.isWinner = !1;
+i.gesture = n.default.GESTURE.NONE;
+i.winCount = 0;
+this.winRound = o;
 this.curRound = 0;
 this.isGameOver = !1;
+this.gameState = e.GAME_STATE.IDLE;
 };
 e.prototype.updateOpponentCoin = function(e) {
 this.opponent && (this.opponent.coin = e);
@@ -816,13 +816,14 @@ e.prototype.updateMyCoin = function(e) {
 this.me && (this.me.coin = e);
 a.default.updateUserCoin(e);
 };
-e.prototype.beginMatch = function(e, t) {
+e.prototype.beginMatch = function(t, o) {
 if (this.me && this.opponent) if (this.isGameOver) {
 console.log("Game Over");
-t && t(this.me, this.opponent, this.isGameOver);
+this.gameState = e.GAME_STATE.GAME_OVER;
+o && o(this.me, this.opponent, this.isGameOver);
 } else {
 this.curRound++;
-this.me.gesture = e;
+this.me.gesture = t;
 this.opponent.gesture = parseInt((3 * Math.random()).toString());
 this.matchGame(this.me, this.opponent);
 if (this.me.isWinner) {
@@ -836,12 +837,14 @@ if (this.me.winCount >= this.winRound) {
 this.me.isWinner = !0;
 this.opponent.isWinner = !1;
 this.isGameOver = !0;
+this.gameState = e.GAME_STATE.GAME_OVER;
 } else if (this.opponent.winCount >= this.winRound) {
 this.me.isWinner = !1;
 this.opponent.isWinner = !0;
 this.isGameOver = !0;
-}
-t && t(this.me, this.opponent, this.isGameOver);
+this.gameState = e.GAME_STATE.GAME_OVER;
+} else this.gameState = e.GAME_STATE.ROUND_END;
+o && o(this.me, this.opponent, this.isGameOver);
 } else console.log("Not enough of gamers, can not play the game");
 };
 e.prototype.matchGame = function(e, t) {
@@ -868,6 +871,13 @@ e.isWinner = !0;
 t.isWinner = !1;
 }
 };
+e.GAME_STATE = cc.Enum({
+IDLE: 0,
+ROUND_BEGIN: 1,
+ROUND_END: 2,
+ROUND_WAITING: 3,
+GAME_OVER: 4
+});
 return e;
 }();
 o.default = i;
@@ -882,7 +892,7 @@ cc._RF.push(t, "2bba1H6FkFBErZNu3KKrYYJ", "GameRoom");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Business/GameManager"), r = e("./LifeController"), c = e("./ResultController"), s = e("../../Framework/UI/SpineManager"), l = e("./GestureSelector"), u = e("../../Framework/Base/CommonPrefabMgr"), d = e("../Common/CountDown"), f = e("../../Framework/Resources/Language"), m = e("../../Framework/Base/CommonAudioMgr"), p = e("../../Framework/Base/CommonFunction"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
+var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = e("../../Framework/Business/GameManager"), r = e("./LifeController"), c = e("./ResultController"), s = e("./GameRoomController"), l = e("../../Framework/UI/SpineManager"), u = e("./GestureSelector"), d = e("../../Framework/Base/CommonPrefabMgr"), f = e("../Common/CountDown"), m = e("../../Framework/Resources/Language"), p = e("../../Framework/Base/CommonAudioMgr"), g = e("../../Framework/Base/CommonFunction"), h = cc._decorator, C = h.ccclass, v = h.property, _ = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -894,25 +904,36 @@ t.opponentResultController = null;
 t.vsSkeleton = null;
 t.gestureSelector = null;
 t.countDown = null;
-t.COUNT_DOWN_TIME = 10;
+t.BET_COUNT_DOWN_TIME = 10;
+t.RESULT_SHOW_TIME = 2;
+t.RANDOM_GESTURE_SHOW_TIME = 3;
 return t;
 }
 t.prototype.onLoad = function() {
-m.default.playMusic(n.default.common.audio.bgm, !0, 1);
-this.curRoom = i.default.getCurRoom();
-this.initRoom();
-this.playVsAnimation();
+var e = this;
+p.default.playMusic(n.default.common.audio.bgm, !0, 1);
+e.curRoom = i.default.getCurRoom();
+e.initRoom();
+e.playVsAnimation(function() {
+e.initStateOnNewGame();
+});
 };
 t.prototype.startNewGame = function() {
-var e = i.default.createRoom(this.curRoom.roomKind);
-if (null != e) {
-this.curRoom = e;
-this.initRoom();
-this.playVsAnimation();
+var e = this, t = i.default.createRoom(e.curRoom.roomKind);
+if (null != t) {
+e.curRoom = t;
+e.initRoom();
+e.playVsAnimation(function() {
+e.initStateOnNewGame();
+});
 } else {
-u.default.createToast(f.default.common.notEnoughMoney);
-this.exitGameRoom();
+d.default.createToast(m.default.common.notEnoughMoney);
+e.exitGameRoom();
 }
+};
+t.prototype.initStateOnNewGame = function() {
+this.curRoom.gameState = s.default.GAME_STATE.ROUND_WAITING;
+cc.isValid(this.countDown) && this.countDown.startCountDown(this.BET_COUNT_DOWN_TIME);
 };
 t.prototype.initRoom = function() {
 a.default.loadSprite(this.titleSprite, n.default.room.texture.roomTitle[this.curRoom.roomKind]);
@@ -934,14 +955,14 @@ cc.isValid(this.opponentResultController) && (this.opponentResultController.node
 cc.isValid(this.gestureSelector) && (this.gestureSelector.node.active = e);
 cc.isValid(this.countDown) && (this.countDown.node.active = e);
 };
-t.prototype.playVsAnimation = function() {
-var e = this;
-s.default.loadSpine(this.vsSkeleton, n.default.room.animation.vs, {
+t.prototype.playVsAnimation = function(e) {
+var t = this;
+l.default.loadSpine(this.vsSkeleton, n.default.room.animation.vs, {
 name: "animation",
 loop: !1
 }, function() {
-e.setControlVisible(!0);
-cc.isValid(e.countDown) && e.countDown.startCountDown(e.COUNT_DOWN_TIME);
+t.setControlVisible(!0);
+e();
 });
 };
 t.prototype.updateLife = function(e, t) {
@@ -954,37 +975,46 @@ cc.isValid(this.opponentResultController) && this.opponentResultController.init(
 };
 t.prototype.beginMatch = function(e) {
 var t = this;
-cc.isValid(t.countDown) && t.countDown.stopCountDown();
-t.curRoom.beginMatch(e, function(e, o, a) {
+t.curRoom.gameState == s.default.GAME_STATE.ROUND_BEGIN ? t.curRoom.beginMatch(e, function(e, o, a) {
+var n = !1, r = "";
+if (e.isWinner || o.isWinner) e.isWinner ? r = e.name : o.isWinner && (r = o.name); else {
+n = !0;
+r = "Nobody";
+}
+console.log("Round-%s, winner is %s, isGameOver=%s", t.curRoom.curRound, r, t.curRoom.isGameOver);
+t.updateLife(e, o);
+t.updateResult(e, o, n);
 if (a) {
 if (e.isWinner) {
-var n = 2 * i.default.betAmount;
-t.curRoom.updateMyCoin(e.coin + n);
-u.default.showWinDialog(n, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
+var c = 2 * i.default.betAmount;
+t.curRoom.updateMyCoin(e.coin + c);
+d.default.showWinDialog(c, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
 } else if (o.isWinner) {
-var r = -i.default.betAmount, c = 2 * i.default.betAmount;
-t.curRoom.updateOpponentCoin(o.coin + c);
-u.default.showLostDialog(r, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
+var l = -i.default.betAmount, u = 2 * i.default.betAmount;
+t.curRoom.updateOpponentCoin(o.coin + u);
+d.default.showLostDialog(l, t.onDialogBackCallback.bind(t), t.onDialogContinueCallback.bind(t));
 }
 cc.isValid(t.countDown) && t.countDown.stopCountDown();
-} else cc.isValid(t.countDown) && t.countDown.startCountDown(t.COUNT_DOWN_TIME);
-var s = !1, l = "";
-if (e.isWinner || o.isWinner) e.isWinner ? l = e.name : o.isWinner && (l = o.name); else {
-s = !0;
-l = "Nobody";
+} else var f = setTimeout(function() {
+clearTimeout(f);
+if (cc.isValid(t.node)) {
+t.curRoom.gameState = s.default.GAME_STATE.ROUND_WAITING;
+t.curRoom.me.gesture = i.default.GESTURE.NONE;
+t.curRoom.me.isWinner = !1;
+t.curRoom.opponent.gesture = i.default.GESTURE.NONE;
+t.curRoom.opponent.isWinner = !1;
+t.updateResult(t.curRoom.me, t.curRoom.opponent, !1);
+cc.isValid(t.countDown) && t.countDown.startCountDown(t.BET_COUNT_DOWN_TIME);
 }
-console.log("Round-%s, winner is %s, isGameOver=%s", t.curRoom.curRound, l, t.curRoom.isGameOver);
-t.updateLife(e, o);
-t.updateResult(e, o, s);
-cc.isValid(t.gestureSelector) && t.gestureSelector.selectGesture(i.default.GESTURE.NONE);
-});
+}, 1e3 * t.RESULT_SHOW_TIME);
+}) : console.log("Can not begin match, current state: " + t.curRoom.gameState);
 };
 t.prototype.countdownCallback = function(e) {
 console.log("Round-%s countdown: %s, isGameOver=%s", this.curRoom.curRound, e, this.curRoom.isGameOver);
-if (!this.curRoom.isGameOver && e <= 0) {
+if (this.curRoom.gameState == s.default.GAME_STATE.ROUND_WAITING && e <= 0) {
 var t = this.gestureSelector.getSelectedGesture();
 t == i.default.GESTURE.NONE && (t = parseInt((3 * Math.random()).toString()));
-this.beginMatch(t);
+this.startNewRound(t);
 }
 };
 t.prototype.exitGameRoom = function() {
@@ -992,8 +1022,8 @@ this.curRoom.resetRoom();
 cc.director.loadScene("Hall");
 };
 t.prototype.onClickBackBtn = function(e) {
-p.default.clickManager(e.target);
-m.default.playEffect(n.default.common.audio.btnClick);
+g.default.clickManager(e.target);
+p.default.playEffect(n.default.common.audio.btnClick);
 this.exitGameRoom();
 };
 t.prototype.onDialogBackCallback = function() {
@@ -1004,23 +1034,43 @@ this.startNewGame();
 };
 t.prototype.onSelectGesture = function(e) {};
 t.prototype.onClickConfirm = function(e) {
-p.default.clickManager(e.target);
-m.default.playEffect(n.default.common.audio.btnClick);
+g.default.clickManager(e.target);
+p.default.playEffect(n.default.common.audio.btnClick);
 var t = this.gestureSelector.getSelectedGesture();
-t != i.default.GESTURE.NONE ? this.beginMatch(t) : u.default.createToast(f.default.common.notSelectGesture);
+t != i.default.GESTURE.NONE ? this.startNewRound(t) : d.default.createToast(m.default.common.notSelectGesture);
+};
+t.prototype.startNewRound = function(e) {
+var t = this;
+if (t.curRoom.gameState == s.default.GAME_STATE.IDLE || t.curRoom.gameState == s.default.GAME_STATE.ROUND_WAITING) {
+t.curRoom.gameState = s.default.GAME_STATE.ROUND_BEGIN;
+cc.isValid(t.countDown) && t.countDown.stopCountDown();
+t.meResultController.startRandomGesture();
+t.opponentResultController.startRandomGesture();
+console.log("Round-%s begin, show random gesture", t.curRoom.curRound);
+var o = setTimeout(function() {
+clearTimeout(o);
+if (cc.isValid(t.node)) {
+t.meResultController.stopRandomGesture();
+t.opponentResultController.stopRandomGesture();
+console.log("Round-%s, stop random gesture", t.curRoom.curRound);
+t.beginMatch(e);
+}
+}, 1e3 * t.RANDOM_GESTURE_SHOW_TIME);
+}
+cc.isValid(t.gestureSelector) && t.gestureSelector.selectGesture(i.default.GESTURE.NONE);
 };
 t.prototype.onDestroy = function() {
 cc.isValid(this.countDown) && this.countDown.stopCountDown();
 };
-__decorate([ C(cc.Sprite) ], t.prototype, "titleSprite", void 0);
-__decorate([ C(r.default) ], t.prototype, "meLifeController", void 0);
-__decorate([ C(r.default) ], t.prototype, "opponentLifeController", void 0);
-__decorate([ C(c.default) ], t.prototype, "meResultController", void 0);
-__decorate([ C(c.default) ], t.prototype, "opponentResultController", void 0);
-__decorate([ C(sp.Skeleton) ], t.prototype, "vsSkeleton", void 0);
-__decorate([ C(l.default) ], t.prototype, "gestureSelector", void 0);
-__decorate([ C(d.default) ], t.prototype, "countDown", void 0);
-return t = __decorate([ h ], t);
+__decorate([ v(cc.Sprite) ], t.prototype, "titleSprite", void 0);
+__decorate([ v(r.default) ], t.prototype, "meLifeController", void 0);
+__decorate([ v(r.default) ], t.prototype, "opponentLifeController", void 0);
+__decorate([ v(c.default) ], t.prototype, "meResultController", void 0);
+__decorate([ v(c.default) ], t.prototype, "opponentResultController", void 0);
+__decorate([ v(sp.Skeleton) ], t.prototype, "vsSkeleton", void 0);
+__decorate([ v(u.default) ], t.prototype, "gestureSelector", void 0);
+__decorate([ v(f.default) ], t.prototype, "countDown", void 0);
+return t = __decorate([ C ], t);
 }(cc.Component);
 o.default = _;
 cc._RF.pop();
@@ -1034,6 +1084,7 @@ cc._RF.pop();
 "../../Framework/UI/SpineManager": "SpineManager",
 "../../Framework/UI/SpriteManager": "SpriteManager",
 "../Common/CountDown": "CountDown",
+"./GameRoomController": "GameRoomController",
 "./GestureSelector": "GestureSelector",
 "./LifeController": "LifeController",
 "./ResultController": "ResultController"
@@ -1135,7 +1186,7 @@ cc._RF.push(t, "c5e60FAkL5JKZtwdy83I9mx", "Hall");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var a = e("../../Framework/Business/UserManager"), n = e("../../Framework/UI/LabelManager"), i = e("../../Framework/Business/GameManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = e("../../Framework/Utils/NativeUtil"), d = cc.js.formatStr, f = e("../../Framework/Base/CommonAudioMgr"), m = e("../../Framework/Base/CommonFunction"), p = e("../../Framework/Base/CommonEventName"), g = cc._decorator, h = g.ccclass, C = g.property, _ = function(e) {
+var a = e("../../Framework/Business/UserManager"), n = e("../../Framework/UI/LabelManager"), i = e("../../Framework/Business/GameManager"), r = e("../../Framework/Base/CommonPrefabMgr"), c = e("../../Framework/UI/SpriteManager"), s = e("../../Framework/Resources/ResManager"), l = e("../../Framework/Resources/Language"), u = e("../../Framework/Utils/NativeUtil"), d = cc.js.formatStr, f = e("../../Framework/Base/CommonAudioMgr"), m = e("../../Framework/Base/CommonFunction"), p = e("../../Framework/Base/CommonEventName"), g = e("../Common/RandomAvatar"), h = cc._decorator, C = h.ccclass, v = h.property, _ = function(e) {
 __extends(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
@@ -1151,6 +1202,8 @@ t.matchLayout = null;
 t.roomTitleSprite = null;
 t.meMatchAvatarSprite = null;
 t.betTipsLabel = null;
+t.randomAvatar = null;
+t.isRandomAvatarRunning = !1;
 return t;
 }
 t.prototype.onLoad = function() {
@@ -1204,9 +1257,24 @@ f.default.playEffect(s.default.common.audio.btnClick);
 a.default.getLoginUser().coin < i.default.roomInfo.roomFive.limit ? r.default.createToast(l.default.common.notEnoughMoney) : this.setCurShowState(this.STATE_MATCH, i.default.ROOM_KIND.FIVE);
 };
 t.prototype.onClickBeginMatch = function(e) {
+var t = this;
 m.default.clickManager(e.target);
 f.default.playEffect(s.default.common.audio.btnClick);
-i.default.enterRoom(this.currentRoomKind);
+if (cc.isValid(t.randomAvatar) && !t.isRandomAvatarRunning) {
+var o = i.default.createRoom(t.currentRoomKind);
+if (null != o) {
+t.isRandomAvatarRunning = !0;
+t.randomAvatar.startRandomAnimation(o.opponent.avatar, function() {
+var e = setTimeout(function() {
+clearTimeout(e);
+if (cc.isValid(t.node)) {
+t.isRandomAvatarRunning = !1;
+i.default.enterRoom();
+}
+}, 1e3);
+});
+} else r.default.createToast(l.default.common.notEnoughMoney);
+}
 };
 t.prototype.setCurShowState = function(e, t) {
 if (e == this.STATE_HALL) {
@@ -1228,17 +1296,18 @@ t.prototype.onKeyUp = function(e) {
 e.keyCode == cc.macro.KEY.back && u.default.quitGame();
 };
 t.prototype.onDestroy = function() {};
-__decorate([ C(cc.Node) ], t.prototype, "hallLayout", void 0);
-__decorate([ C(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
-__decorate([ C(cc.Label) ], t.prototype, "nameLabel", void 0);
-__decorate([ C(cc.Label) ], t.prototype, "idLabel", void 0);
-__decorate([ C(cc.Label) ], t.prototype, "coinLabel", void 0);
-__decorate([ C(cc.Node) ], t.prototype, "homeLogo", void 0);
-__decorate([ C(cc.Node) ], t.prototype, "matchLayout", void 0);
-__decorate([ C(cc.Sprite) ], t.prototype, "roomTitleSprite", void 0);
-__decorate([ C(cc.Sprite) ], t.prototype, "meMatchAvatarSprite", void 0);
-__decorate([ C(cc.Label) ], t.prototype, "betTipsLabel", void 0);
-return t = __decorate([ h ], t);
+__decorate([ v(cc.Node) ], t.prototype, "hallLayout", void 0);
+__decorate([ v(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
+__decorate([ v(cc.Label) ], t.prototype, "nameLabel", void 0);
+__decorate([ v(cc.Label) ], t.prototype, "idLabel", void 0);
+__decorate([ v(cc.Label) ], t.prototype, "coinLabel", void 0);
+__decorate([ v(cc.Node) ], t.prototype, "homeLogo", void 0);
+__decorate([ v(cc.Node) ], t.prototype, "matchLayout", void 0);
+__decorate([ v(cc.Sprite) ], t.prototype, "roomTitleSprite", void 0);
+__decorate([ v(cc.Sprite) ], t.prototype, "meMatchAvatarSprite", void 0);
+__decorate([ v(cc.Label) ], t.prototype, "betTipsLabel", void 0);
+__decorate([ v(g.default) ], t.prototype, "randomAvatar", void 0);
+return t = __decorate([ C ], t);
 }(cc.Component);
 o.default = _;
 cc._RF.pop();
@@ -1253,7 +1322,8 @@ cc._RF.pop();
 "../../Framework/Resources/ResManager": "ResManager",
 "../../Framework/UI/LabelManager": "LabelManager",
 "../../Framework/UI/SpriteManager": "SpriteManager",
-"../../Framework/Utils/NativeUtil": "NativeUtil"
+"../../Framework/Utils/NativeUtil": "NativeUtil",
+"../Common/RandomAvatar": "RandomAvatar"
 } ],
 LabelManager: [ function(e, t, o) {
 "use strict";
@@ -1810,6 +1880,120 @@ return e;
 o.default = a;
 cc._RF.pop();
 }, {} ],
+RandomAvatar: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "97173+dmapBXqY9p6VmMri/", "RandomAvatar");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var a = e("../../Framework/UI/SpriteManager"), n = e("../../Framework/Resources/ResManager"), i = cc._decorator, r = i.ccclass, c = i.property, s = function(e) {
+__extends(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t.avatarFrames = [];
+t.avatarUpSprite = null;
+t.avatarSprite = null;
+t.avatarDownSprite = null;
+t.animRunning = !1;
+t.userAvatar = 0;
+t.finishCallback = null;
+t.INIT_STEP = 20;
+t.ROLL_TIME = 2e3;
+t.step = t.INIT_STEP;
+t.animBeginTime = 0;
+t.lastSlowDownTime = 0;
+t.topAvatarNode = null;
+t.lastAvatar = -1;
+return t;
+}
+t.prototype.onLoad = function() {
+this.avatarUpSprite.y = 156;
+this.avatarSprite.y = 0;
+this.avatarDownSprite.y = -156;
+};
+t.prototype.startRandomAnimation = function(e, t) {
+this.animRunning = !0;
+this.topAvatarNode = null;
+this.animBeginTime = new Date().getTime();
+this.lastSlowDownTime = 0;
+this.step = this.INIT_STEP;
+console.log("Start to roll, will stop at avatar: " + e);
+this.finishCallback = t;
+this.userAvatar = e;
+};
+t.prototype.stopRandomAnimation = function() {
+this.animRunning = !1;
+this.topAvatarNode = null;
+this.animBeginTime = 0;
+this.lastSlowDownTime = 0;
+this.step = this.INIT_STEP;
+};
+t.prototype.isAnimRunning = function() {
+return this.animRunning;
+};
+t.prototype.update = function(e) {
+if (this.animRunning) {
+var t = new Date().getTime();
+if (t - this.animBeginTime > this.ROLL_TIME && t - this.lastSlowDownTime > 100) {
+console.log("开始减速, step=%s", this.step);
+this.step -= 2;
+if (this.step <= 2) {
+this.step = 2;
+if (!cc.isValid(this.topAvatarNode)) {
+this.topAvatarNode = this.findTopAvatar();
+var o = n.default.common.texture.userAvatarsVS[this.userAvatar];
+a.default.loadSpriteForNode(this.topAvatarNode, o);
+}
+}
+this.lastSlowDownTime = t;
+}
+this.moveNodeByStep(this.avatarUpSprite);
+this.moveNodeByStep(this.avatarSprite);
+this.moveNodeByStep(this.avatarDownSprite);
+if (cc.isValid(this.topAvatarNode) && this.topAvatarNode.y <= 0) {
+console.log("topAvatarNode y=" + this.topAvatarNode.y);
+this.stopRandomAnimation();
+this.finishCallback && this.finishCallback();
+}
+}
+};
+t.prototype.moveNodeByStep = function(e) {
+e.y -= this.step;
+if (e.y < -156) {
+e.y = 312;
+this.changeAvatar(e);
+}
+};
+t.prototype.changeAvatar = function(e) {
+var t = -1;
+do {
+t = parseInt((Math.random() * this.avatarFrames.length).toString());
+} while (this.lastAvatar == t);
+this.lastAvatar = t;
+a.default.setSpriteFrame(e, this.avatarFrames[t]);
+};
+t.prototype.findTopAvatar = function() {
+for (var e = this.node.children, t = 0, o = null, a = 0; a < e.length; a++) {
+var n = e[a];
+if (n.y > t) {
+o = n;
+t = n.y;
+}
+}
+return o;
+};
+__decorate([ c([ cc.SpriteFrame ]) ], t.prototype, "avatarFrames", void 0);
+__decorate([ c(cc.Node) ], t.prototype, "avatarUpSprite", void 0);
+__decorate([ c(cc.Node) ], t.prototype, "avatarSprite", void 0);
+__decorate([ c(cc.Node) ], t.prototype, "avatarDownSprite", void 0);
+return t = __decorate([ r ], t);
+}(cc.Component);
+o.default = s;
+cc._RF.pop();
+}, {
+"../../Framework/Resources/ResManager": "ResManager",
+"../../Framework/UI/SpriteManager": "SpriteManager"
+} ],
 ResManager: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "69e38nI6MpPb67UX3teUryd", "ResManager");
@@ -1878,7 +2062,9 @@ t.avatarSprite = null;
 t.gestureSprite = null;
 t.winnerSprite = null;
 t.highlightSprite = null;
+t.gestures = [];
 t.user = null;
+t.RANDOM_TAG = 1e3;
 return t;
 }
 t.prototype.init = function(e, t) {
@@ -1897,10 +2083,25 @@ r.default.clickManager(e.target);
 c.default.playEffect(n.default.common.audio.btnClick);
 i.default.showUserDialog(this.user);
 };
+t.prototype.startRandomGesture = function() {
+var e = this, t = -1, o = cc.callFunc(function() {
+var o = -1;
+do {
+o = parseInt((3 * Math.random()).toString());
+} while (o == t);
+t = o;
+a.default.setSpriteFrame(e.gestureSprite, e.gestures[o]);
+});
+e.node.runAction(cc.repeatForever(cc.sequence(o, cc.delayTime(.1)))).setTag(e.RANDOM_TAG);
+};
+t.prototype.stopRandomGesture = function() {
+this.node.stopActionByTag(this.RANDOM_TAG);
+};
 __decorate([ u(cc.Sprite) ], t.prototype, "avatarSprite", void 0);
 __decorate([ u(cc.Sprite) ], t.prototype, "gestureSprite", void 0);
 __decorate([ u(cc.Sprite) ], t.prototype, "winnerSprite", void 0);
 __decorate([ u(cc.Sprite) ], t.prototype, "highlightSprite", void 0);
+__decorate([ u([ cc.SpriteFrame ]) ], t.prototype, "gestures", void 0);
 return t = __decorate([ l ], t);
 }(cc.Component);
 o.default = d;
@@ -2355,4 +2556,4 @@ cc._RF.pop();
 "../../Framework/UI/LabelManager": "LabelManager",
 "./BaseDialog": "BaseDialog"
 } ]
-}, {}, [ "CountDown", "Toast", "BaseDialog", "CheckinDialog", "RuleDialog", "SettingDialog", "UserDialog", "WinDialog", "GameRoom", "GameRoomController", "GestureSelector", "LifeController", "ResultController", "Hall", "Launcher", "Loading", "CommonAudioMgr", "CommonEventName", "CommonFunction", "CommonPrefabMgr", "Global", "CheckinManager", "GameManager", "User", "UserManager", "Language", "ResManager", "DateFormat", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "CountDownUtil", "LocalStorageMgr", "NativeUtil" ]);
+}, {}, [ "CountDown", "RandomAvatar", "Toast", "BaseDialog", "CheckinDialog", "RuleDialog", "SettingDialog", "UserDialog", "WinDialog", "GameRoom", "GameRoomController", "GestureSelector", "LifeController", "ResultController", "Hall", "Launcher", "Loading", "CommonAudioMgr", "CommonEventName", "CommonFunction", "CommonPrefabMgr", "Global", "CheckinManager", "GameManager", "User", "UserManager", "Language", "ResManager", "DateFormat", "LabelManager", "NodeManager", "PrefabManager", "SpineManager", "SpriteManager", "CountDownUtil", "LocalStorageMgr", "NativeUtil" ]);
