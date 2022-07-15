@@ -3950,6 +3950,17 @@
     "highlightSprite": {
       "__id__": 79
     },
+    "gestures": [
+      {
+        "__uuid__": "54fed877-b25f-4423-b64e-bdd767af3d39"
+      },
+      {
+        "__uuid__": "ed6638d7-c63f-471c-858f-5a16283219b4"
+      },
+      {
+        "__uuid__": "f6f76a43-55a1-4045-bc14-152ddc2bb93b"
+      }
+    ],
     "_id": "adwYX/cKVNgKASIAziIkYd"
   },
   {
@@ -4667,6 +4678,17 @@
     "highlightSprite": {
       "__id__": 95
     },
+    "gestures": [
+      {
+        "__uuid__": "54fed877-b25f-4423-b64e-bdd767af3d39"
+      },
+      {
+        "__uuid__": "ed6638d7-c63f-471c-858f-5a16283219b4"
+      },
+      {
+        "__uuid__": "f6f76a43-55a1-4045-bc14-152ddc2bb93b"
+      }
+    ],
     "_id": "3a/Tr10QtJLLFJ+T8RUeoP"
   },
   {

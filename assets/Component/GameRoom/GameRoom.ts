@@ -57,22 +57,36 @@ export default class GameRoom extends cc.Component {
     private RESULT_SHOW_TIME = 2;
 
     protected onLoad(): void {
+        let self = this;
         CommonAudioMgr.playMusic(ResManager.common.audio.bgm, true, 1);
-        this.curRoom = GameManager.getCurRoom();
-        this.initRoom();
-        this.playVsAnimation();
+        self.curRoom = GameManager.getCurRoom();
+        self.initRoom();
+        self.playVsAnimation(function () {
+            self.initStateOnNewGame();
+        });
     }
 
     private startNewGame() {
-        let newRoom = GameManager.createRoom(this.curRoom.roomKind);
+        let self = this;
+        let newRoom = GameManager.createRoom(self.curRoom.roomKind);
         if (newRoom == null) {
             CommonPrefabMgr.createToast(Language.common.notEnoughMoney);
-            this.exitGameRoom();
+            self.exitGameRoom();
             return;
         }
-        this.curRoom = newRoom;
-        this.initRoom();
-        this.playVsAnimation();
+        self.curRoom = newRoom;
+        self.initRoom();
+        self.playVsAnimation(function () {
+            self.initStateOnNewGame();
+        });
+    }
+
+    private initStateOnNewGame() {
+        let self = this;
+        self.curRoom.gameState = GameRoomController.GAME_STATE.ROUND_WAITING;
+        if (cc.isValid(self.countDown)) {
+            self.countDown.startCountDown(self.BET_COUNT_DOWN_TIME);
+        }
     }
 
     private initRoom() {
@@ -116,7 +130,7 @@ export default class GameRoom extends cc.Component {
         }
     }
 
-    private playVsAnimation() {
+    private playVsAnimation(completeCallback) {
         let self = this;
         let options = {
             name: "animation",
@@ -124,9 +138,7 @@ export default class GameRoom extends cc.Component {
         };
         SpineManager.loadSpine(this.vsSkeleton, ResManager.room.animation.vs, options, function () {
             self.setControlVisible(true);
-            if (cc.isValid(self.countDown)) {
-                self.countDown.startCountDown(self.BET_COUNT_DOWN_TIME);
-            }
+            completeCallback();
         });
     }
 
@@ -161,8 +173,9 @@ export default class GameRoom extends cc.Component {
 
     private beginMatch(gesture: number) {
         let self = this;
-        if (cc.isValid(self.countDown)) {
-            self.countDown.stopCountDown();
+        if (self.curRoom.gameState != GameRoomController.GAME_STATE.ROUND_BEGIN) {
+            console.log("Can not begin match, current state: " + self.curRoom.gameState);
+            return;
         }
         self.curRoom.beginMatch(gesture, function (me: User, opponent: User, isGameOver: boolean) {
             //判断是否平局
@@ -181,10 +194,6 @@ export default class GameRoom extends cc.Component {
             //更新UI
             self.updateLife(me, opponent);
             self.updateResult(me, opponent, isDraw);
-            //清空出拳
-            if (cc.isValid(self.gestureSelector)) {
-                self.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
-            }
 
             if (isGameOver) {
                 //结算金额
@@ -241,7 +250,7 @@ export default class GameRoom extends cc.Component {
             if (gesture == GameManager.GESTURE.NONE) {
                 gesture = parseInt((Math.random() * 3).toString());
             }
-            self.beginMatch(gesture);
+            self.startNewRound(gesture);
         }
     }
 
@@ -284,12 +293,44 @@ export default class GameRoom extends cc.Component {
             CommonPrefabMgr.createToast(Language.common.notSelectGesture);
             return;
         }
-        if (self.curRoom.gameState == GameRoomController.GAME_STATE.IDLE || self.curRoom.gameState == GameRoomController.GAME_STATE.ROUND_WAITING) {
-            self.beginMatch(gesture);
-        } else {
-            console.log("Can not begin match, current state: " + self.curRoom.gameState);
+        self.startNewRound(gesture);
+    }
+
+    protected startNewRound(gesture: number) {
+        let self = this;
+        if (self.curRoom.gameState == GameRoomController.GAME_STATE.IDLE
+            || self.curRoom.gameState == GameRoomController.GAME_STATE.ROUND_WAITING) {
+
+            self.curRoom.gameState = GameRoomController.GAME_STATE.ROUND_BEGIN;
+
+            if (cc.isValid(self.countDown)) {
+                self.countDown.stopCountDown();
+            }
+
+            //开始随机选择出拳
+            self.meResultController.startRandomGesture();
+            self.opponentResultController.startRandomGesture();
+            console.log("Round-%s begin, show random gesture", self.curRoom.curRound);
+
+            let timeout = setTimeout(function () {
+                clearTimeout(timeout);
+                if (!cc.isValid(self.node)) {
+                    return;
+                }
+                self.meResultController.stopRandomGesture();
+                self.opponentResultController.stopRandomGesture();
+                console.log("Round-%s, stop random gesture", self.curRoom.curRound);
+                self.beginMatch(gesture);
+
+            }, 3 * 1000);
+        }
+
+        //清空出拳
+        if (cc.isValid(self.gestureSelector)) {
+            self.gestureSelector.selectGesture(GameManager.GESTURE.NONE);
         }
     }
+
 
     protected onDestroy(): void {
         let self = this;

@@ -32,8 +32,11 @@ export default class ResultController extends cc.Component {
     @property(cc.Sprite)
     highlightSprite: cc.Sprite = null;
 
+    @property([cc.SpriteFrame])
+    gestures: cc.SpriteFrame[] = [];
 
     private user: User = null;
+    private RANDOM_TAG = 1000;
 
     public init(user: User, isDraw: boolean) {
         if (!user) {
@@ -69,6 +72,26 @@ export default class ResultController extends cc.Component {
         CommonAudioMgr.playEffect(ResManager.common.audio.btnClick);
 
         CommonPrefabMgr.showUserDialog(this.user);
+    }
+
+    public startRandomGesture() {
+        let self = this;
+        let changeGesture = cc.callFunc(function () {
+            let randomIndex = parseInt((Math.random() * 3).toString());
+            SpriteManager.setSpriteFrame(self.gestureSprite, self.gestures[randomIndex]);
+        });
+        let action = self.node.runAction(cc.repeatForever(
+            cc.sequence(
+                changeGesture,
+                cc.delayTime(0.1)
+            )
+        ));
+        action.setTag(self.RANDOM_TAG);
+    }
+
+    public stopRandomGesture() {
+        let self = this;
+        self.node.stopActionByTag(self.RANDOM_TAG);
     }
 
 
