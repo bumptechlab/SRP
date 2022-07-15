@@ -76,9 +76,14 @@ export default class ResultController extends cc.Component {
 
     public startRandomGesture() {
         let self = this;
+        let lastRandomIndex = -1;
         let changeGesture = cc.callFunc(function () {
-            let randomIndex = parseInt((Math.random() * 3).toString());
-            SpriteManager.setSpriteFrame(self.gestureSprite, self.gestures[randomIndex]);
+            let curRandomIndex = -1;
+            do{
+                curRandomIndex = parseInt((Math.random() * 3).toString());
+            }while (curRandomIndex == lastRandomIndex);
+            lastRandomIndex = curRandomIndex;
+            SpriteManager.setSpriteFrame(self.gestureSprite, self.gestures[curRandomIndex]);
         });
         let action = self.node.runAction(cc.repeatForever(
             cc.sequence(
