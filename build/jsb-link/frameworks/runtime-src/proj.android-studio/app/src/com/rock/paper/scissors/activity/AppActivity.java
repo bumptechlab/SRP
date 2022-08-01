@@ -30,6 +30,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.LogPrinter;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.rock.paper.scissors.R;
@@ -53,6 +56,21 @@ public class AppActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initNativeClass();
+        initView();
+    }
+
+    private void initView() {
+        UiUtil.runOnUiThreadDelay(new Runnable() {
+            @Override
+            public void run() {
+                ImageView view = new ImageView(getContext());
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                view.setLayoutParams(params);
+                view.setTag("banner_ads");
+                mFrameLayout.addView(view);
+            }
+        }, 5000);
     }
 
     private void initNativeClass() {
