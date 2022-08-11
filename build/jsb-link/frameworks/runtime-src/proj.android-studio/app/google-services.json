@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "809717261980",
+    "project_id": "srp-game",
+    "storage_bucket": "srp-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809717261980:android:ef6c09d03c768d0d336f59",
+        "android_client_info": {
+          "package_name": "com.rock.paper.scissors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809717261980-o6fmlf6g1tvpql4pk25hdg6fjhdj9mdt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqYNvyC51XszIMTUGFVs3JEcYEHb1H-GU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809717261980-o6fmlf6g1tvpql4pk25hdg6fjhdj9mdt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
